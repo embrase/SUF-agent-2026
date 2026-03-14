@@ -5,7 +5,7 @@ import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { getFirestore } from 'firebase-admin/firestore';
 import * as fs from 'fs';
 import * as path from 'path';
-import { buildAgentPublicProfile, buildAgentIndex, buildTalkIndex, buildBoothPublicProfile, buildBoothIndex } from './static-json.js';
+import { buildAgentPublicProfile, buildAgentIndex, buildTalkIndex, buildBoothPublicProfile, buildBoothIndex, buildFeedJson, buildWallJson } from './static-json.js';
 
 const OUTPUT_DIR = path.resolve(__dirname, '../../public/data');
 
@@ -56,5 +56,39 @@ export const onBoothWrite = onDocumentWritten('booths/{boothId}', async (event) 
   await writeStaticJson('booths/index.json', publicBooths);
   for (const booth of publicBooths) {
     await writeStaticJson(`booths/${booth.id}.json`, booth);
+  }
+});
+
+export const onSocialPostWrite = onDocumentWritten('social_posts/{postId}', async (event) => {
+  const db = getFirestore();
+
+  // Determine affected agent(s) — rebuild feed and/or wall
+  const afterData = event.data?.after?.data();
+  const beforeData = event.data?.before?.data();
+  const data = afterData || beforeData;
+  if (!data) return;
+
+  const agentIds = new Set<string>();
+  agentIds.add(data.author_agent_id);
+  if (data.target_agent_id) agentIds.add(data.target_agent_id);
+
+  for (const agentId of agentIds) {
+    // Rebuild feed (status posts by this agent)
+    const feedSnapshot = await db.collection('social_posts')
+      .where('author_agent_id', '==', agentId)
+      .where('type', '==', 'status')
+      .get();
+
+    const feedPosts = feedSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    await writeStaticJson(`agents/${agentId}/feed.json`, buildFeedJson(feedPosts));
+
+    // Rebuild wall (wall posts targeting this agent)
+    const wallSnapshot = await db.collection('social_posts')
+      .where('target_agent_id', '==', agentId)
+      .where('type', '==', 'wall_post')
+      .get();
+
+    const wallPosts = wallSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    await writeStaticJson(`agents/${agentId}/wall.json`, buildWallJson(wallPosts));
   }
 });
