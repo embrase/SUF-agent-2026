@@ -27,6 +27,7 @@ import { handleTalkUpload } from './api/talk-upload.js';
 import { handleRecommend, handleGetRecommendations } from './api/meetings.js';
 import { handleManifestoLock, handleManifestoSubmit } from './api/manifesto.js';
 import { handleYearbook } from './api/yearbook.js';
+import { handlePublicStats } from './api/public-stats.js';
 import { createAdminRouter } from './api/admin/router.js';
 import { loadSettings } from './config/settings.js';
 import { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite, onManifestoWrite, onYearbookWrite } from './triggers/on-agent-write.js';
@@ -64,6 +65,7 @@ const getGlobalWriteFreeze = async (): Promise<boolean> => {
 app.post('/api/register', handleRegister(db, mailer));
 app.get('/api/verify-email', handleVerifyEmail(db));
 app.get('/api/status', handleStatus(getPhaseOverrides, getGlobalWriteFreeze));
+app.get('/api/public/stats', handlePublicStats(db));
 
 // Authenticated endpoints
 app.post('/api/profile', auth, rateLimiter, handleProfile(db));
