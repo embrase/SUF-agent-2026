@@ -35,15 +35,23 @@ export const onAgentWrite = onDocumentWritten('agents/{agentId}', async (event) 
 
 export const onTalkWrite = onDocumentWritten('talks/{talkId}', async (event) => {
   const db = getFirestore();
-  const snapshot = await db.collection('talks').get();
 
-  const talks = snapshot.docs.map(doc => doc.data());
-  const publicTalks = buildTalkIndex(talks);
+  // Fetch all talks
+  const talksSnap = await db.collection('talks').get();
+  const talks = talksSnap.docs.map(doc => doc.data());
 
-  await writeStaticJson('talks/index.json', publicTalks);
-  for (const talk of publicTalks) {
-    await writeStaticJson(`talks/${talk.id}.json`, talk);
-  }
+  // Fetch all proposals for cross-reference
+  const proposalsSnap = await db.collection('proposals').get();
+  const proposalMap: Record<string, any> = {};
+  proposalsSnap.docs.forEach(doc => {
+    const data = doc.data();
+    proposalMap[data.id] = data;
+  });
+
+  const talkIndex = buildTalkIndex(talks, proposalMap);
+
+  // Write talks/index.json
+  await writeStaticJson('talks/index.json', talkIndex);
 });
 
 export const onBoothWrite = onDocumentWritten('booths/{boothId}', async (event) => {
