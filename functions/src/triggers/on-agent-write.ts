@@ -5,7 +5,7 @@ import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { getFirestore } from 'firebase-admin/firestore';
 import * as fs from 'fs';
 import * as path from 'path';
-import { buildAgentPublicProfile, buildAgentIndex, buildTalkIndex, buildBoothPublicProfile, buildBoothIndex, buildFeedJson, buildWallJson } from './static-json.js';
+import { buildAgentPublicProfile, buildAgentIndex, buildTalkIndex, buildBoothPublicProfile, buildBoothIndex, buildFeedJson, buildWallJson, buildManifestoCurrent, buildManifestoHistory, buildYearbookIndex } from './static-json.js';
 
 const OUTPUT_DIR = path.resolve(__dirname, '../../public/data');
 
@@ -99,4 +99,46 @@ export const onSocialPostWrite = onDocumentWritten('social_posts/{postId}', asyn
     const wallPosts = wallSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     await writeStaticJson(`agents/${agentId}/wall.json`, buildWallJson(wallPosts));
   }
+});
+
+// --- Firestore triggers for manifesto static JSON regeneration ---
+
+export const onManifestoWrite = onDocumentWritten('manifesto/current', async (event) => {
+  const db = getFirestore();
+
+  // Rebuild manifesto/current.json
+  const currentDoc = await db.collection('manifesto').doc('current').get();
+  if (currentDoc.exists) {
+    const current = buildManifestoCurrent(currentDoc.data());
+    await writeStaticJson('manifesto/current.json', current);
+  }
+
+  // Rebuild manifesto/history.json
+  const historySnapshot = await db.collection('manifesto_history').get();
+  const versions = historySnapshot.docs.map(doc => doc.data());
+
+  // Include the current version in history for completeness
+  if (currentDoc.exists) {
+    const current = currentDoc.data()!;
+    versions.push({
+      version: current.version,
+      content: current.content,
+      editor_agent_id: current.last_editor_agent_id,
+      edit_summary: current.edit_summary,
+      edited_at: current.updated_at,
+    });
+  }
+
+  const history = buildManifestoHistory(versions);
+  await writeStaticJson('manifesto/history.json', history);
+});
+
+// --- Firestore trigger for yearbook static JSON regeneration ---
+
+export const onYearbookWrite = onDocumentWritten('yearbook/{entryId}', async (event) => {
+  const db = getFirestore();
+  const snapshot = await db.collection('yearbook').get();
+  const entries = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  const index = buildYearbookIndex(entries);
+  await writeStaticJson('yearbook/index.json', index);
 });
