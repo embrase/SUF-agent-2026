@@ -40,13 +40,20 @@ export function useApi() {
 }
 
 export class ApiError extends Error {
+  status: number;
+  code: string;
+  details?: Record<string, unknown>;
+
   constructor(
-    public status: number,
-    public code: string,
+    status: number,
+    code: string,
     message: string,
-    public details?: Record<string, unknown>,
+    details?: Record<string, unknown>,
   ) {
     super(message);
     this.name = 'ApiError';
+    this.status = status;
+    this.code = code;
+    this.details = details;
   }
 }
