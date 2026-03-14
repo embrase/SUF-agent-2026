@@ -15,8 +15,15 @@ import { handleProfile, handleMe } from './api/profile.js';
 import { handleStatus } from './api/status.js';
 import { handleCreateTalk, handleUpdateTalk } from './api/talks.js';
 import { handleCreateOrUpdateBooth, handlePostBoothWallMessage, handleGetBoothWall, handleDeleteBoothWallMessage } from './api/booths.js';
+import { handleGetNextTalk, handleVote } from './api/vote.js';
+import {
+  handlePostStatus,
+  handlePostWall,
+  handleDeletePost,
+  handleDeleteWallPost,
+} from './api/social.js';
 import { loadSettings } from './config/settings.js';
-import { onAgentWrite, onTalkWrite, onBoothWrite } from './triggers/on-agent-write.js';
+import { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite } from './triggers/on-agent-write.js';
 
 initializeApp();
 const db = getFirestore();
@@ -83,6 +90,33 @@ app.post('/api/booths/:id/wall', auth, rateLimiter, handlePostBoothWallMessage(d
 app.get('/api/booths/:id/wall', auth, handleGetBoothWall(db));
 app.delete('/api/booths/:id/wall/:messageId', auth, rateLimiter, handleDeleteBoothWallMessage(db));
 
+// Phase gates for voting and social
+const votingGate = createPhaseGate('voting', (key) => {
+  return undefined;
+});
+const showFloorGate = createPhaseGate('show_floor', (key) => {
+  return undefined;
+});
+
+// --- Voting endpoints (requires voting phase) ---
+app.get('/api/talks/next', auth, rateLimiter, votingGate, handleGetNextTalk(db));
+app.post('/api/vote', auth, rateLimiter, votingGate, async (req, res) => {
+  const settings = await loadSettings(db);
+  return handleVote(db, settings)(req as any, res);
+});
+
+// --- Social endpoints (requires show_floor phase) ---
+app.post('/api/social/status', auth, rateLimiter, showFloorGate, async (req, res) => {
+  const settings = await loadSettings(db);
+  return handlePostStatus(db, settings)(req as any, res);
+});
+app.post('/api/social/wall/:id', auth, rateLimiter, showFloorGate, async (req, res) => {
+  const settings = await loadSettings(db);
+  return handlePostWall(db, settings)(req as any, res);
+});
+app.delete('/api/social/:id', auth, rateLimiter, showFloorGate, handleDeletePost(db));
+app.delete('/api/social/wall/:id/:postId', auth, rateLimiter, showFloorGate, handleDeleteWallPost(db));
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -91,4 +125,4 @@ app.get('/api/health', (req, res) => {
 export const api = onRequest({ cors: true }, app);
 
 // Firestore triggers for static JSON regeneration
-export { onAgentWrite, onTalkWrite, onBoothWrite };
+export { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite };
