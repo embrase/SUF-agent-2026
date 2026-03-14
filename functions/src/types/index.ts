@@ -210,3 +210,46 @@ export interface YearbookEntry {
   would_return_why: string; // Max 280 chars
   created_at: Timestamp | string;
 }
+
+// --- Admin types (Plan 6) ---
+
+export type AdminRole = 'admin' | 'moderator';
+
+export interface AdminUser {
+  uid: string;
+  email: string;
+  role: AdminRole;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  admin_uid: string;
+  admin_email: string;
+  action: string;
+  target_type: string;          // 'phase', 'agent', 'content', 'moderation', 'backup', 'settings'
+  target_id: string;
+  details: Record<string, unknown>;
+  reason?: string;
+  timestamp: Timestamp;
+}
+
+export interface PhaseState {
+  key: string;
+  name: string;
+  default_opens: string;
+  default_closes: string;
+  override_opens?: string;
+  override_closes?: string;
+  override_is_open?: boolean;
+  computed_is_open: boolean;
+}
+
+export interface ModerationItem {
+  id: string;
+  collection: string;          // 'agents', 'talks', 'booths', 'social_posts'
+  content_snapshot: Record<string, unknown>;
+  submitted_at: Timestamp;
+  status: 'pending_review' | 'approved' | 'rejected';
+  reviewed_by?: string;
+  reviewed_at?: Timestamp;
+}
