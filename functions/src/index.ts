@@ -22,6 +22,8 @@ import {
   handleDeletePost,
   handleDeleteWallPost,
 } from './api/social.js';
+import { handleTalkUpload } from './api/talk-upload.js';
+import { handleRecommend, handleGetRecommendations } from './api/meetings.js';
 import { loadSettings } from './config/settings.js';
 import { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite } from './triggers/on-agent-write.js';
 
@@ -116,6 +118,31 @@ app.post('/api/social/wall/:id', auth, rateLimiter, showFloorGate, async (req, r
 });
 app.delete('/api/social/:id', auth, rateLimiter, showFloorGate, handleDeletePost(db));
 app.delete('/api/social/wall/:id/:postId', auth, rateLimiter, showFloorGate, handleDeleteWallPost(db));
+
+// Phase gates for talk uploads and matchmaking
+const talkUploadGate = createPhaseGate('talk_uploads', (key) => {
+  return undefined;
+});
+const matchmakingGate = createPhaseGate('matchmaking', (key) => {
+  return undefined;
+});
+
+// Settings getter for talk upload validation
+const getTalkSettings = async () => {
+  const settings = await loadSettings(db);
+  return {
+    talk_max_duration_seconds: settings.talk_max_duration_seconds,
+    talk_accepted_formats: settings.talk_accepted_formats,
+    talk_accepted_languages: settings.talk_accepted_languages,
+  };
+};
+
+// --- Talk upload endpoints (requires talk_uploads phase) ---
+app.post('/api/talks/:id/upload', auth, rateLimiter, talkUploadGate, handleTalkUpload(db, getTalkSettings));
+
+// --- Meeting recommendation endpoints (requires matchmaking phase) ---
+app.post('/api/meetings/recommend', auth, rateLimiter, matchmakingGate, handleRecommend(db));
+app.get('/api/meetings/recommendations', auth, rateLimiter, matchmakingGate, handleGetRecommendations(db));
 
 // Health check
 app.get('/api/health', (req, res) => {

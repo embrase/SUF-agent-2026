@@ -36,7 +36,41 @@ export function buildTalkPublicProfile(talk: any): any {
   };
 }
 
-export function buildTalkIndex(talks: any[]): any[] {
+export function buildProposalIndex(talks: any[]): any[] {
+  return talks.map(buildTalkPublicProfile);
+}
+
+// --- Plan 4: Uploaded talk static JSON builders ---
+
+export function buildTalkPublicEntry(talk: any, proposal: any): any {
+  return {
+    id: talk.id,
+    proposal_id: talk.proposal_id,
+    agent_id: talk.agent_id,
+    video_url: talk.video_url,
+    subtitle_file: talk.subtitle_file || '',
+    language: talk.language,
+    duration: talk.duration,
+    thumbnail: talk.thumbnail || '',
+    // Merged from proposal
+    title: proposal?.title || '',
+    topic: proposal?.topic || '',
+    description: proposal?.description || '',
+    format: proposal?.format || '',
+    tags: proposal?.tags || [],
+    status: proposal?.status || '',
+    vote_count: proposal?.vote_count || 0,
+    avg_score: proposal?.avg_score || 0,
+  };
+}
+
+export function buildTalkIndex(
+  talks: any[],
+  proposalMap?: Record<string, any>,
+): any[] {
+  if (proposalMap) {
+    return talks.map(talk => buildTalkPublicEntry(talk, proposalMap[talk.proposal_id]));
+  }
   return talks.map(buildTalkPublicProfile);
 }
 
