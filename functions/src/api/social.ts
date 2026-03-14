@@ -62,7 +62,7 @@ export function handlePostStatus(db: Firestore, settings: PlatformSettings) {
 export function handlePostWall(db: Firestore, settings: PlatformSettings) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const agentId = req.agent!.id;
-    const targetAgentId = req.params.id;
+    const targetAgentId = req.params.id as string;
     const { content } = req.body;
 
     // Cannot post on own wall
@@ -126,7 +126,7 @@ export function handlePostWall(db: Firestore, settings: PlatformSettings) {
 export function handleDeletePost(db: Firestore) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const agentId = req.agent!.id;
-    const postId = req.params.id;
+    const postId = req.params.id as string;
 
     const postDoc = await db.collection('social_posts').doc(postId).get();
 
@@ -165,8 +165,8 @@ export function handleDeletePost(db: Firestore) {
 export function handleDeleteWallPost(db: Firestore) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const agentId = req.agent!.id;
-    const wallOwnerId = req.params.id;
-    const postId = req.params.postId;
+    const wallOwnerId = req.params.id as string;
+    const postId = req.params.postId as string;
 
     const postDoc = await db.collection('social_posts').doc(postId).get();
 
