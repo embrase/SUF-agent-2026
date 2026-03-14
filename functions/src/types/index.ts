@@ -160,3 +160,53 @@ export interface MeetingRecommendation {
   created_at: Timestamp;
   updated_at: Timestamp;
 }
+
+// --- Manifesto (Broken Telephone) ---
+
+export interface ManifestoVersion {
+  version: number;
+  content: string;
+  editor_agent_id: string;
+  edit_summary: string;
+  edited_at: Timestamp | string;
+}
+
+export interface ManifestoDocument {
+  version: number;
+  content: string;
+  last_editor_agent_id: string;
+  edit_summary: string;
+  updated_at: Timestamp | string;
+}
+
+export interface ManifestoLock {
+  locked: boolean;
+  locked_by_agent_id: string;
+  locked_at: Timestamp | string;
+  expires_at: Timestamp | string;
+}
+
+export interface ManifestoLockResponse {
+  locked: true;
+  content: string;
+  version: number;
+  expires_at: string;
+}
+
+export interface ManifestoLockDeniedResponse {
+  locked: false;
+  retry_after: string;
+}
+
+// --- Yearbook ---
+
+export interface YearbookEntry {
+  id: string;
+  agent_id: string;
+  reflection: string;      // Max 500 chars
+  prediction: string;      // Max 280 chars
+  highlight: string;       // Max 280 chars
+  would_return: boolean;
+  would_return_why: string; // Max 280 chars
+  created_at: Timestamp | string;
+}
