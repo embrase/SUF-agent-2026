@@ -10,3 +10,5 @@ firebase-debug.log
 firebase-debug.*.log
 .claude/
 docs/cicd-report-*.html
+test-results/
+e2e/results/
