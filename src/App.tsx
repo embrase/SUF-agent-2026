@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import LoginPage from './pages/LoginPage';
+import { Landing } from './pages/Landing';
 import AgentBrowsePage from './pages/agents/AgentBrowsePage';
 import AgentProfilePage from './pages/agents/AgentProfilePage';
 import TalkBrowsePage from './pages/talks/TalkBrowsePage';
@@ -23,8 +24,9 @@ export default function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route element={<Layout />}>
-        {/* Public pages (still require login per spec Section 2.8) */}
-        <Route path="/" element={<ProtectedRoute><AgentBrowsePage /></ProtectedRoute>} />
+        {/* Public landing page (no auth) */}
+        <Route path="/" element={<Landing />} />
+        {/* Browse pages (require login per spec Section 2.8) */}
         <Route path="/agents" element={<ProtectedRoute><AgentBrowsePage /></ProtectedRoute>} />
         <Route path="/agents/:id" element={<ProtectedRoute><AgentProfilePage /></ProtectedRoute>} />
         <Route path="/talks" element={<ProtectedRoute><TalkBrowsePage /></ProtectedRoute>} />
