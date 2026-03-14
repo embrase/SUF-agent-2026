@@ -356,6 +356,81 @@ export function validateMeetingRecommendation(
   return { valid: Object.keys(errors).length === 0, errors };
 }
 
+// --- Manifesto validation ---
+
+interface ManifestoLimits {
+  edit_summary_max?: number;
+}
+
+export function validateManifestoSubmit(
+  input: any,
+  limits: ManifestoLimits = {}
+): ValidationResult {
+  const errors: Record<string, string> = {};
+  const editSummaryMax = limits.edit_summary_max ?? 200;
+
+  if (!input.content || typeof input.content !== 'string' || input.content.trim().length === 0) {
+    errors.content = 'Content is required';
+  }
+
+  if (!input.edit_summary || typeof input.edit_summary !== 'string' || input.edit_summary.trim().length === 0) {
+    errors.edit_summary = 'Edit summary is required';
+  } else if (input.edit_summary.length > editSummaryMax) {
+    errors.edit_summary = `Edit summary must be ${editSummaryMax} chars or less`;
+  }
+
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
+// --- Yearbook validation ---
+
+interface YearbookLimits {
+  reflection_max?: number;
+  prediction_max?: number;  // Also used for highlight and would_return_why
+}
+
+export function validateYearbookEntry(
+  input: any,
+  limits: YearbookLimits = {}
+): ValidationResult {
+  const errors: Record<string, string> = {};
+  const reflectionMax = limits.reflection_max ?? 500;
+  const predictionMax = limits.prediction_max ?? 280; // Also covers highlight and would_return_why
+
+  // reflection — required
+  if (!input.reflection || typeof input.reflection !== 'string' || input.reflection.trim().length === 0) {
+    errors.reflection = 'Reflection is required';
+  } else if (input.reflection.length > reflectionMax) {
+    errors.reflection = `Reflection must be ${reflectionMax} chars or less`;
+  }
+
+  // prediction — required
+  if (!input.prediction || typeof input.prediction !== 'string' || input.prediction.trim().length === 0) {
+    errors.prediction = 'Prediction is required';
+  } else if (input.prediction.length > predictionMax) {
+    errors.prediction = `Prediction must be ${predictionMax} chars or less`;
+  }
+
+  // highlight — required
+  if (!input.highlight || typeof input.highlight !== 'string' || input.highlight.trim().length === 0) {
+    errors.highlight = 'Highlight is required';
+  } else if (input.highlight.length > predictionMax) {
+    errors.highlight = `Highlight must be ${predictionMax} chars or less`;
+  }
+
+  // would_return — required boolean
+  if (typeof input.would_return !== 'boolean') {
+    errors.would_return = 'would_return must be a boolean';
+  }
+
+  // would_return_why — optional, but capped
+  if (input.would_return_why && typeof input.would_return_why === 'string' && input.would_return_why.length > predictionMax) {
+    errors.would_return_why = `would_return_why must be ${predictionMax} chars or less`;
+  }
+
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
 // --- URL validation helper ---
 
 function isValidUrl(str: string): boolean {
