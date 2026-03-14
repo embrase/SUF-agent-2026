@@ -265,6 +265,97 @@ export function validateSocialPostInput(input: any, settings: SocialPostValidati
   return { valid: Object.keys(errors).length === 0, errors };
 }
 
+// --- Plan 4: Talk upload validation ---
+
+interface TalkUploadSettings {
+  talk_max_duration_seconds: number;
+  talk_accepted_formats: string[];
+  talk_accepted_languages: string[];
+}
+
+export function validateTalkUpload(
+  input: any,
+  settings: TalkUploadSettings,
+): ValidationResult {
+  const errors: Record<string, string> = {};
+
+  // video_url: required, must end with accepted format (before any query params)
+  if (!input.video_url || typeof input.video_url !== 'string' || input.video_url.trim().length === 0) {
+    errors.video_url = 'Video URL is required';
+  } else {
+    // Extract path portion (strip query params and fragments)
+    let urlPath: string;
+    try {
+      const parsed = new URL(input.video_url);
+      urlPath = parsed.pathname.toLowerCase();
+    } catch {
+      urlPath = input.video_url.toLowerCase();
+    }
+    const hasValidFormat = settings.talk_accepted_formats.some(
+      (fmt: string) => urlPath.endsWith(fmt.toLowerCase()),
+    );
+    if (!hasValidFormat) {
+      errors.video_url = `Video URL must end with one of: ${settings.talk_accepted_formats.join(', ')}`;
+    }
+  }
+
+  // transcript: required
+  if (!input.transcript || typeof input.transcript !== 'string' || input.transcript.trim().length === 0) {
+    errors.transcript = 'Transcript is required';
+  }
+
+  // language: required, must be in accepted list
+  if (!input.language || typeof input.language !== 'string') {
+    errors.language = 'Language is required';
+  } else if (!settings.talk_accepted_languages.includes(input.language.toUpperCase())) {
+    errors.language = `Language must be one of: ${settings.talk_accepted_languages.join(', ')}`;
+  }
+
+  // duration: required, positive number, <= max
+  if (input.duration === undefined || input.duration === null || typeof input.duration !== 'number') {
+    errors.duration = 'Duration (in seconds) is required';
+  } else if (input.duration <= 0) {
+    errors.duration = 'Duration must be a positive number';
+  } else if (input.duration > settings.talk_max_duration_seconds) {
+    errors.duration = `Duration must be ${settings.talk_max_duration_seconds} seconds or less`;
+  }
+
+  // subtitle_file: optional (no validation beyond type check if provided)
+  // thumbnail: optional (no validation beyond type check if provided)
+
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
+// --- Plan 4: Meeting recommendation validation ---
+
+export function validateMeetingRecommendation(
+  input: any,
+  recommendingAgentId: string,
+): ValidationResult {
+  const errors: Record<string, string> = {};
+
+  // target_agent_id: required, cannot be self
+  if (!input.target_agent_id || typeof input.target_agent_id !== 'string' || input.target_agent_id.trim().length === 0) {
+    errors.target_agent_id = 'Target agent ID is required';
+  } else if (input.target_agent_id === recommendingAgentId) {
+    errors.target_agent_id = 'Cannot recommend a meeting with yourself';
+  }
+
+  // rationale: required, max 500 chars
+  if (!input.rationale || typeof input.rationale !== 'string' || input.rationale.trim().length === 0) {
+    errors.rationale = 'Rationale is required';
+  } else if (input.rationale.length > 500) {
+    errors.rationale = 'Rationale must be 500 chars or less';
+  }
+
+  // match_score: required, must be a number
+  if (input.match_score === undefined || input.match_score === null || typeof input.match_score !== 'number') {
+    errors.match_score = 'Match score is required and must be a number';
+  }
+
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
 // --- URL validation helper ---
 
 function isValidUrl(str: string): boolean {

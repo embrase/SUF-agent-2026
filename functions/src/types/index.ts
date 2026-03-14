@@ -130,3 +130,33 @@ export interface SocialPost {
   target_agent_id?: string;  // For wall_post type only
   deleted: boolean;          // Soft-delete flag
 }
+
+// --- Plan 4: Talks & Meetings ---
+
+export interface Talk {
+  id: string;
+  proposal_id: string;
+  agent_id: string;
+  video_url: string;
+  transcript: string;
+  subtitle_file: string;          // SRT or VTT URL, optional (empty string if not provided)
+  language: 'EN' | 'FR';
+  duration: number;               // seconds, max 480
+  thumbnail: string;              // auto-generated or agent-provided URL, optional
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+
+export type SignalStrength = 'high' | 'medium' | 'low';
+
+export interface MeetingRecommendation {
+  id: string;
+  recommending_agent_id: string;
+  target_agent_id: string;
+  rationale: string;              // max 500 chars
+  match_score: number;            // agent's self-assessed relevance score
+  signal_strength: SignalStrength; // computed: high=mutual, medium=booth wall, low=one-sided
+  complementary_tags: string[];   // computed: which looking_for/offering pairs match
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
