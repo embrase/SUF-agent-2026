@@ -67,7 +67,7 @@ export function handleListSocial(db: Firestore) {
 
 export function handleHideContent(db: Firestore) {
   return async (req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { collection, reason } = req.body;
 
     if (!collection || !validateCollection(collection)) {
@@ -76,13 +76,14 @@ export function handleHideContent(db: Firestore) {
       return;
     }
 
-    const doc = await db.collection(collection).doc(id).get();
+    const collectionName = collection as string;
+    const doc = await db.collection(collectionName).doc(id).get();
     if (!doc.exists) {
-      sendError(res, 404, 'not_found', `Item ${id} not found in ${collection}`);
+      sendError(res, 404, 'not_found', `Item ${id} not found in ${collectionName}`);
       return;
     }
 
-    await db.collection(collection).doc(id).update({
+    await db.collection(collectionName).doc(id).update({
       hidden: true,
       hidden_at: FieldValue.serverTimestamp(),
       hidden_by: req.adminUser!.uid,
@@ -92,15 +93,15 @@ export function handleHideContent(db: Firestore) {
       admin_uid: req.adminUser!.uid,
       admin_email: req.adminUser!.email,
       action: 'content_hide',
-      target_type: collection,
+      target_type: collectionName,
       target_id: id,
-      details: { collection },
+      details: { collection: collectionName },
       reason,
     });
 
     res.status(200).json({
       id,
-      collection,
+      collection: collectionName,
       hidden: true,
     });
   };
@@ -108,7 +109,7 @@ export function handleHideContent(db: Firestore) {
 
 export function handleApproveContent(db: Firestore) {
   return async (req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { collection, reason } = req.body;
 
     if (!collection || !validateCollection(collection)) {
@@ -117,13 +118,14 @@ export function handleApproveContent(db: Firestore) {
       return;
     }
 
-    const doc = await db.collection(collection).doc(id).get();
+    const collectionName = collection as string;
+    const doc = await db.collection(collectionName).doc(id).get();
     if (!doc.exists) {
-      sendError(res, 404, 'not_found', `Item ${id} not found in ${collection}`);
+      sendError(res, 404, 'not_found', `Item ${id} not found in ${collectionName}`);
       return;
     }
 
-    await db.collection(collection).doc(id).update({
+    await db.collection(collectionName).doc(id).update({
       status: 'approved',
       hidden: false,
       approved_at: FieldValue.serverTimestamp(),
@@ -134,15 +136,15 @@ export function handleApproveContent(db: Firestore) {
       admin_uid: req.adminUser!.uid,
       admin_email: req.adminUser!.email,
       action: 'content_approve',
-      target_type: collection,
+      target_type: collectionName,
       target_id: id,
-      details: { collection },
+      details: { collection: collectionName },
       reason,
     });
 
     res.status(200).json({
       id,
-      collection,
+      collection: collectionName,
       status: 'approved',
     });
   };

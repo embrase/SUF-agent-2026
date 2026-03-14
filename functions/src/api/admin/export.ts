@@ -17,7 +17,7 @@ const EXPORTABLE_COLLECTIONS = [
 
 export function handleExport(db: Firestore) {
   return async (req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const { collection } = req.params;
+    const collection = req.params.collection as string;
 
     if (!EXPORTABLE_COLLECTIONS.includes(collection)) {
       sendError(res, 400, 'validation_error',
