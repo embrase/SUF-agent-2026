@@ -1,5 +1,63 @@
+// functions/src/index.ts
 import { onRequest } from 'firebase-functions/v2/https';
+import { initializeApp } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import express from 'express';
+import cors from 'cors';
 
-export const api = onRequest({ cors: true }, (req, res) => {
-  res.json({ status: 'ok', message: 'SUF Agent Platform API' });
+import { createAuthMiddleware } from './middleware/auth.js';
+import { createRateLimiter } from './middleware/rate-limit.js';
+import { handleRegister } from './api/register.js';
+import { handleVerifyEmail } from './api/verify-email.js';
+import { handleProfile, handleMe } from './api/profile.js';
+import { handleStatus } from './api/status.js';
+import { loadSettings } from './config/settings.js';
+import { onAgentWrite } from './triggers/on-agent-write.js';
+
+initializeApp();
+const db = getFirestore();
+
+const app = express();
+app.use(cors({ origin: true }));
+app.use(express.json());
+
+const auth = createAuthMiddleware(db);
+const rateLimiter = createRateLimiter(60);
+
+// Placeholder mailer (replace with real email service in deployment)
+const mailer = {
+  sendVerification: async (email: string, token: string, agentId: string) => {
+    console.log(`[MAILER] Verification email to ${email} with token ${token} for agent ${agentId}`);
+  },
+};
+
+// Phase overrides loader — reads from Firestore settings
+const getPhaseOverrides = async (phaseKey: string) => {
+  const settings = await loadSettings(db);
+  return settings.phase_overrides[phaseKey];
+};
+
+// Global write freeze check — reads from Firestore settings
+const getGlobalWriteFreeze = async (): Promise<boolean> => {
+  const settings = await loadSettings(db);
+  return settings.global_write_freeze;
+};
+
+// Public endpoints (no auth)
+app.post('/api/register', handleRegister(db, mailer));
+app.get('/api/verify-email', handleVerifyEmail(db));
+app.get('/api/status', handleStatus(getPhaseOverrides, getGlobalWriteFreeze));
+
+// Authenticated endpoints
+app.post('/api/profile', auth, rateLimiter, handleProfile(db));
+app.get('/api/me', auth, handleMe(db));
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+export const api = onRequest({ cors: true }, app);
+
+// Firestore triggers for static JSON regeneration
+export { onAgentWrite };
