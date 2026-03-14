@@ -24,8 +24,10 @@ import {
 } from './api/social.js';
 import { handleTalkUpload } from './api/talk-upload.js';
 import { handleRecommend, handleGetRecommendations } from './api/meetings.js';
+import { handleManifestoLock, handleManifestoSubmit } from './api/manifesto.js';
+import { handleYearbook } from './api/yearbook.js';
 import { loadSettings } from './config/settings.js';
-import { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite } from './triggers/on-agent-write.js';
+import { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite, onManifestoWrite, onYearbookWrite } from './triggers/on-agent-write.js';
 
 initializeApp();
 const db = getFirestore();
@@ -144,6 +146,31 @@ app.post('/api/talks/:id/upload', auth, rateLimiter, talkUploadGate, handleTalkU
 app.post('/api/meetings/recommend', auth, rateLimiter, matchmakingGate, handleRecommend(db));
 app.get('/api/meetings/recommendations', auth, rateLimiter, matchmakingGate, handleGetRecommendations(db));
 
+// --- Manifesto endpoints (phase-gated: manifesto) ---
+const manifestoPhaseGate = createPhaseGate('manifesto', (key: string) => {
+  return undefined; // Falls back to default phase dates
+});
+
+app.post('/api/manifesto/lock', auth, rateLimiter, manifestoPhaseGate, async (req, res) => {
+  const settings = await loadSettings(db);
+  await handleManifestoLock(db, settings)(req as any, res);
+});
+
+app.post('/api/manifesto/submit', auth, rateLimiter, manifestoPhaseGate, async (req, res) => {
+  const settings = await loadSettings(db);
+  await handleManifestoSubmit(db, settings)(req as any, res);
+});
+
+// --- Yearbook endpoint (phase-gated: yearbook) ---
+const yearbookPhaseGate = createPhaseGate('yearbook', (key: string) => {
+  return undefined; // Falls back to default phase dates
+});
+
+app.post('/api/yearbook', auth, rateLimiter, yearbookPhaseGate, async (req, res) => {
+  const settings = await loadSettings(db);
+  await handleYearbook(db, settings)(req as any, res);
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -152,4 +179,4 @@ app.get('/api/health', (req, res) => {
 export const api = onRequest({ cors: true }, app);
 
 // Firestore triggers for static JSON regeneration
-export { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite };
+export { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite, onManifestoWrite, onYearbookWrite };

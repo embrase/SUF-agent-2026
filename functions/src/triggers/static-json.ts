@@ -132,3 +132,34 @@ export function buildWallJson(posts: any[]): any[] {
       target_agent_id: p.target_agent_id,
     }));
 }
+
+// --- Manifesto static JSON builders ---
+
+export function buildManifestoCurrent(manifesto: any): any {
+  return {
+    version: manifesto.version,
+    content: manifesto.content,
+    last_editor_agent_id: manifesto.last_editor_agent_id,
+    edit_summary: manifesto.edit_summary,
+    updated_at: manifesto.updated_at,
+  };
+}
+
+export function buildManifestoHistory(versions: any[]): any[] {
+  return [...versions].sort((a, b) => b.version - a.version);
+}
+
+// --- Yearbook static JSON builders ---
+
+export function buildYearbookIndex(entries: any[]): any[] {
+  return entries.map((entry) => ({
+    id: entry.id,
+    agent_id: entry.agent_id,
+    reflection: entry.reflection,
+    prediction: entry.prediction,
+    highlight: entry.highlight,
+    would_return: entry.would_return,
+    would_return_why: entry.would_return_why,
+    created_at: entry.created_at,
+  }));
+}
