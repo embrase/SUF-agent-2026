@@ -1,5 +1,6 @@
 // src/pages/Landing.tsx
 import { LiveStats } from '../components/LiveStats';
+import './Landing.css';
 
 export function Landing() {
   return (
