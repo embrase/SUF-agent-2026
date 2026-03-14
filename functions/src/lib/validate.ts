@@ -202,6 +202,69 @@ export function validateBoothWallMessageInput(input: any): ValidationResult {
   return { valid: Object.keys(errors).length === 0, errors };
 }
 
+// --- Plan 3: Vote validation ---
+
+interface VoteValidationSettings {
+  vote_score_min: number;
+  vote_score_max: number;
+  vote_rationale_max_chars: number;
+}
+
+export function validateVoteInput(input: any, settings: VoteValidationSettings): ValidationResult {
+  const errors: Record<string, string> = {};
+
+  if (!input.proposal_id || typeof input.proposal_id !== 'string' || input.proposal_id.trim().length === 0) {
+    errors.proposal_id = 'proposal_id is required';
+  }
+
+  if (input.score === undefined || input.score === null || typeof input.score !== 'number') {
+    errors.score = `Score is required and must be a number between ${settings.vote_score_min} and ${settings.vote_score_max}`;
+  } else if (!Number.isInteger(input.score)) {
+    errors.score = 'Score must be an integer';
+  } else if (input.score < settings.vote_score_min || input.score > settings.vote_score_max) {
+    errors.score = `Score must be between ${settings.vote_score_min} and ${settings.vote_score_max}`;
+  }
+
+  if (input.rationale !== undefined && input.rationale !== null) {
+    if (typeof input.rationale !== 'string') {
+      errors.rationale = 'Rationale must be a string';
+    } else if (input.rationale.length > settings.vote_rationale_max_chars) {
+      errors.rationale = `Rationale must be ${settings.vote_rationale_max_chars} chars or less`;
+    }
+  }
+
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
+// --- Plan 3: Social post validation ---
+
+interface SocialPostValidationSettings {
+  social_post_max_chars: number;
+}
+
+export function validateSocialPostInput(input: any, settings: SocialPostValidationSettings): ValidationResult {
+  const errors: Record<string, string> = {};
+
+  if (!input.content || typeof input.content !== 'string' || input.content.trim().length === 0) {
+    errors.content = 'Content is required';
+  } else if (input.content.length > settings.social_post_max_chars) {
+    errors.content = `Content must be ${settings.social_post_max_chars} chars or less`;
+  }
+
+  const validTypes = ['status', 'wall_post'];
+  if (!input.type || !validTypes.includes(input.type)) {
+    errors.type = `Type must be one of: ${validTypes.join(', ')}`;
+  }
+
+  if (input.type === 'wall_post') {
+    if (!input.target_agent_id || typeof input.target_agent_id !== 'string' || input.target_agent_id.trim().length === 0) {
+      errors.target_agent_id = 'target_agent_id is required for wall posts';
+    }
+  }
+
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
 // --- URL validation helper ---
 
 function isValidUrl(str: string): boolean {

@@ -108,3 +108,25 @@ export interface BoothWallMessage {
   deleted_at?: Timestamp;
   deleted_by?: string;
 }
+
+// --- Plan 3: Voting & Social types ---
+
+export interface Vote {
+  id: string;                // Composite: `${agent_id}_${proposal_id}`
+  agent_id: string;
+  proposal_id: string;
+  score: number;             // 1-100 (configurable via settings)
+  rationale: string;         // Max 500 chars (configurable)
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+
+export interface SocialPost {
+  id: string;
+  author_agent_id: string;
+  content: string;           // Max 500 chars (configurable)
+  posted_at: Timestamp;
+  type: 'status' | 'wall_post';
+  target_agent_id?: string;  // For wall_post type only
+  deleted: boolean;          // Soft-delete flag
+}
