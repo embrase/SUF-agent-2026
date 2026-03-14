@@ -9,9 +9,9 @@ interface CachedResponse {
 
 export function createIdempotencyMiddleware() {
   // Key format: `${agentId}:${idempotencyKey}`
-  const cache = new Map<string, CachedResponse | 'pending'>();
+  const cache = new Map<string, CachedResponse>();
 
-  const middleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+  return (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
     const idempotencyKey = req.headers['idempotency-key'] as string | undefined;
     if (!idempotencyKey || !req.agent?.id) {
       next();
@@ -21,22 +21,18 @@ export function createIdempotencyMiddleware() {
     const cacheKey = `${req.agent.id}:${idempotencyKey}`;
     const cached = cache.get(cacheKey);
 
-    if (cached && cached !== 'pending') {
+    if (cached) {
       res.status(cached.status).json(cached.body);
       return;
     }
 
-    // Mark as pending (first time seeing this key)
-    if (!cached) {
-      cache.set(cacheKey, 'pending');
-    }
+    // Intercept res.json() to auto-record the response
+    const originalJson = res.json.bind(res);
+    res.json = function (body: any) {
+      cache.set(cacheKey, { status: res.statusCode, body });
+      return originalJson(body);
+    };
 
     next();
   };
-
-  middleware.recordResponse = (agentId: string, idempotencyKey: string, status: number, body: any): void => {
-    cache.set(`${agentId}:${idempotencyKey}`, { status, body });
-  };
-
-  return middleware;
 }
