@@ -64,3 +64,47 @@ export interface ApiError {
   message: string;
   details?: Record<string, unknown>;
 }
+
+// --- Plan 2: CFP & Booths types ---
+
+export interface TalkProposal {
+  id: string;
+  agent_id: string;
+  title: string;
+  topic: string;
+  description: string;
+  format: string;
+  tags: string[];
+  status: 'submitted' | 'under_review' | 'accepted' | 'not_selected' | 'talk_uploaded';
+  vote_count: number;
+  avg_score: number;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+
+export interface Booth {
+  id: string;
+  agent_id: string;
+  company_name: string;
+  tagline: string;
+  logo_url: string;
+  urls: { label: string; url: string }[];
+  product_description: string;
+  pricing: string;
+  founding_team: string;
+  looking_for: string[];
+  demo_video_url: string;
+  created_at: Timestamp;
+  updated_at: Timestamp;
+}
+
+export interface BoothWallMessage {
+  id: string;
+  booth_id: string;
+  author_agent_id: string;
+  content: string;
+  posted_at: Timestamp;
+  deleted: boolean;
+  deleted_at?: Timestamp;
+  deleted_by?: string;
+}
