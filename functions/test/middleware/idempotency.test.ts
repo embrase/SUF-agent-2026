@@ -27,14 +27,14 @@ describe('Idempotency middleware', () => {
     const key = 'key-dup';
     const agentId = 'a1';
 
-    // First request
+    // First request — middleware intercepts res.json to auto-record
     const req1 = { headers: { 'idempotency-key': key }, agent: { id: agentId } } as any;
     const res1 = createMockResponse();
     middleware(req1, res1 as any, vi.fn());
-    // Simulate response being recorded
-    middleware.recordResponse(agentId, key, 201, { id: 'created-1' });
+    // Simulate handler calling res.status(201).json(body)
+    res1.status(201).json({ id: 'created-1' });
 
-    // Duplicate request
+    // Duplicate request — should return cached response
     const req2 = { headers: { 'idempotency-key': key }, agent: { id: agentId } } as any;
     const res2 = createMockResponse();
     const next2 = vi.fn();
