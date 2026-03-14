@@ -83,7 +83,7 @@ export function handleCreateOrUpdateBooth(db: Firestore) {
 export function handlePostBoothWallMessage(db: Firestore, getBoothWallMaxPerDay: () => Promise<number>) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const agentId = req.agent!.id;
-    const boothId = req.params.id;
+    const boothId = req.params.id as string;
 
     const validation = validateBoothWallMessageInput(req.body);
     if (!validation.valid) {
@@ -144,7 +144,7 @@ export function handlePostBoothWallMessage(db: Firestore, getBoothWallMaxPerDay:
 export function handleGetBoothWall(db: Firestore) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const agentId = req.agent!.id;
-    const boothId = req.params.id;
+    const boothId = req.params.id as string;
 
     const boothDoc = await db.collection('booths').doc(boothId).get();
     if (!boothDoc.exists) {
@@ -183,8 +183,8 @@ export function handleGetBoothWall(db: Firestore) {
 export function handleDeleteBoothWallMessage(db: Firestore) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const agentId = req.agent!.id;
-    const boothId = req.params.id;
-    const messageId = req.params.messageId;
+    const boothId = req.params.id as string;
+    const messageId = req.params.messageId as string;
 
     const messageDoc = await db.collection('booth_wall_messages').doc(messageId).get();
     if (!messageDoc.exists) {

@@ -7,12 +7,16 @@ import cors from 'cors';
 
 import { createAuthMiddleware } from './middleware/auth.js';
 import { createRateLimiter } from './middleware/rate-limit.js';
+import { createPhaseGate } from './middleware/phase-gate.js';
+import { createIdempotencyMiddleware } from './middleware/idempotency.js';
 import { handleRegister } from './api/register.js';
 import { handleVerifyEmail } from './api/verify-email.js';
 import { handleProfile, handleMe } from './api/profile.js';
 import { handleStatus } from './api/status.js';
+import { handleCreateTalk, handleUpdateTalk } from './api/talks.js';
+import { handleCreateOrUpdateBooth, handlePostBoothWallMessage, handleGetBoothWall, handleDeleteBoothWallMessage } from './api/booths.js';
 import { loadSettings } from './config/settings.js';
-import { onAgentWrite } from './triggers/on-agent-write.js';
+import { onAgentWrite, onTalkWrite, onBoothWrite } from './triggers/on-agent-write.js';
 
 initializeApp();
 const db = getFirestore();
@@ -52,6 +56,33 @@ app.get('/api/status', handleStatus(getPhaseOverrides, getGlobalWriteFreeze));
 app.post('/api/profile', auth, rateLimiter, handleProfile(db));
 app.get('/api/me', auth, handleMe(db));
 
+// Phase gates
+const cfpGate = createPhaseGate('cfp', (key) => {
+  return undefined;
+});
+const boothSetupGate = createPhaseGate('booth_setup', (key) => {
+  return undefined;
+});
+
+// Idempotency middleware instance
+const idempotency = createIdempotencyMiddleware();
+
+// Settings helper for booth wall rate limit
+const getBoothWallMaxPerDay = async (): Promise<number> => {
+  const settings = await loadSettings(db);
+  return settings.booth_wall_max_per_day;
+};
+
+// --- Talk proposal endpoints (requires cfp phase) ---
+app.post('/api/talks', auth, rateLimiter, cfpGate, idempotency, handleCreateTalk(db));
+app.post('/api/talks/:id', auth, rateLimiter, cfpGate, handleUpdateTalk(db));
+
+// --- Booth endpoints (requires booth_setup phase) ---
+app.post('/api/booths', auth, rateLimiter, boothSetupGate, idempotency, handleCreateOrUpdateBooth(db));
+app.post('/api/booths/:id/wall', auth, rateLimiter, handlePostBoothWallMessage(db, getBoothWallMaxPerDay));
+app.get('/api/booths/:id/wall', auth, handleGetBoothWall(db));
+app.delete('/api/booths/:id/wall/:messageId', auth, rateLimiter, handleDeleteBoothWallMessage(db));
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -60,4 +91,4 @@ app.get('/api/health', (req, res) => {
 export const api = onRequest({ cors: true }, app);
 
 // Firestore triggers for static JSON regeneration
-export { onAgentWrite };
+export { onAgentWrite, onTalkWrite, onBoothWrite };

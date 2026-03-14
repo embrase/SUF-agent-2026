@@ -58,7 +58,7 @@ export function handleCreateTalk(db: Firestore) {
 export function handleUpdateTalk(db: Firestore) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const agentId = req.agent!.id;
-    const talkId = req.params.id;
+    const talkId = req.params.id as string;
 
     const talkDoc = await db.collection('talks').doc(talkId).get();
 

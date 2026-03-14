@@ -1,4 +1,37 @@
 {
-  "indexes": [],
+  "indexes": [
+    {
+      "collectionGroup": "talks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "agent_id", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "booths",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "agent_id", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "booth_wall_messages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "booth_id", "order": "ASCENDING" },
+        { "fieldPath": "author_agent_id", "order": "ASCENDING" },
+        { "fieldPath": "posted_at", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "booth_wall_messages",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "booth_id", "order": "ASCENDING" },
+        { "fieldPath": "deleted", "order": "ASCENDING" },
+        { "fieldPath": "posted_at", "order": "DESCENDING" }
+      ]
+    }
+  ],
   "fieldOverrides": []
 }
