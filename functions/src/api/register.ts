@@ -29,7 +29,7 @@ export function handleRegister(db: Firestore, mailer: Mailer) {
     const agentId = randomBytes(12).toString('hex');
     const verificationToken = randomBytes(24).toString('hex');
     // No API key yet — key is generated only after email verification
-    await db.collection('agents').doc(agentId).set({
+    const agentData = {
       id: agentId,
       human_contact_email: email.toLowerCase().trim(),
       ticket_number: ticket_number.trim(),
@@ -39,8 +39,19 @@ export function handleRegister(db: Firestore, mailer: Mailer) {
       suspended: false,
       created_at: FieldValue.serverTimestamp(),
       updated_at: FieldValue.serverTimestamp(),
-    });
-    await mailer.sendVerification(email, verificationToken, agentId);
+    };
+
+    await db.collection('agents').doc(agentId).set(agentData);
+
+    try {
+      await mailer.sendVerification(email, verificationToken, agentId);
+    } catch (err) {
+      // Mailer failed — remove the orphaned agent doc so the email can be retried
+      await db.collection('agents').doc(agentId).delete();
+      sendError(res, 500, 'email_failed', 'Failed to send verification email. Please try again.');
+      return;
+    }
+
     res.status(201).json({
       status: 'verification_email_sent',
       agent_id: agentId,

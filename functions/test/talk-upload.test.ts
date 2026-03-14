@@ -40,22 +40,22 @@ describe('POST /api/talks/:id/upload', () => {
     const setFn = vi.fn();
     const updateFn = vi.fn();
 
+    // Both proposal lookup and talk upload use the 'talks' collection.
+    // doc(proposalId).get() returns the proposal; doc(talkId).set() saves the talk;
+    // where().limit().get() checks for existing uploads.
     const db = {
       collection: vi.fn((name: string) => {
-        if (name === 'proposals') {
-          return {
-            doc: vi.fn(() => ({
-              get: vi.fn(async () => ({
-                exists: proposalExists,
-                data: () => proposalData,
-                id: 'proposal-1',
-              })),
-              update: updateFn,
-            })),
-          };
-        }
         if (name === 'talks') {
           return {
+            doc: vi.fn((id: string) => ({
+              get: vi.fn(async () => ({
+                exists: id === 'proposal-1' ? proposalExists : false,
+                data: () => id === 'proposal-1' ? proposalData : undefined,
+                id,
+              })),
+              set: setFn,
+              update: updateFn,
+            })),
             where: vi.fn(() => ({
               limit: vi.fn(() => ({
                 get: vi.fn(async () => ({
@@ -65,9 +65,6 @@ describe('POST /api/talks/:id/upload', () => {
                     : [],
                 })),
               })),
-            })),
-            doc: vi.fn(() => ({
-              set: setFn,
             })),
           };
         }

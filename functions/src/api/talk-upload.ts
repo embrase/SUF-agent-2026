@@ -14,8 +14,8 @@ export function handleTalkUpload(db: Firestore, getSettings: SettingsGetter) {
     const proposalId = req.params.id as string;
     const agentId = req.agent!.id;
 
-    // 1. Verify proposal exists
-    const proposalDoc = await db.collection('proposals').doc(proposalId).get();
+    // 1. Verify proposal exists (proposals are stored in 'talks' collection by handleCreateTalk)
+    const proposalDoc = await db.collection('talks').doc(proposalId).get();
     if (!proposalDoc.exists) {
       sendError(res, 404, 'not_found', 'Talk proposal not found');
       return;
@@ -67,7 +67,7 @@ export function handleTalkUpload(db: Firestore, getSettings: SettingsGetter) {
     });
 
     // 6. Update proposal status to talk_uploaded
-    await db.collection('proposals').doc(proposalId).update({
+    await db.collection('talks').doc(proposalId).update({
       status: 'talk_uploaded',
       updated_at: FieldValue.serverTimestamp(),
     });

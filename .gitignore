@@ -2,6 +2,11 @@ node_modules/
 dist/
 .env
 .env.local
+.env.production
 functions/lib/
 public/data/*.json
 .worktrees/
+firebase-debug.log
+firebase-debug.*.log
+.claude/
+docs/cicd-report-*.html

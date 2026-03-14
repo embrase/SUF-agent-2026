@@ -49,35 +49,57 @@ const mailer = {
   },
 };
 
-// Phase overrides loader — reads from Firestore settings
-const getPhaseOverrides = async (phaseKey: string) => {
+// Cached phase overrides — refreshed periodically for phase gates (sync) and status endpoint (async)
+let cachedPhaseOverrides: Record<string, { is_open?: boolean; opens?: string; closes?: string }> = {};
+let cachedWriteFreeze = false;
+let settingsCacheExpiry = 0;
+const SETTINGS_CACHE_TTL_MS = 10_000; // 10 seconds
+
+async function refreshSettingsCache(): Promise<void> {
+  const now = Date.now();
+  if (now < settingsCacheExpiry) return;
   const settings = await loadSettings(db);
-  return settings.phase_overrides[phaseKey];
+  cachedPhaseOverrides = settings.phase_overrides || {};
+  cachedWriteFreeze = settings.global_write_freeze;
+  settingsCacheExpiry = now + SETTINGS_CACHE_TTL_MS;
+}
+
+// Sync getter for phase gates — reads from cache (populated by middleware below)
+const getPhaseOverridesSync = (phaseKey: string) => {
+  return cachedPhaseOverrides[phaseKey];
 };
 
-// Global write freeze check — reads from Firestore settings
+// Async getter for handleStatus — refreshes cache then reads
+const getPhaseOverridesAsync = async (phaseKey: string) => {
+  await refreshSettingsCache();
+  return cachedPhaseOverrides[phaseKey];
+};
+
+// Global write freeze check
 const getGlobalWriteFreeze = async (): Promise<boolean> => {
-  const settings = await loadSettings(db);
-  return settings.global_write_freeze;
+  await refreshSettingsCache();
+  return cachedWriteFreeze;
 };
 
 // Public endpoints (no auth)
 app.post('/api/register', handleRegister(db, mailer));
 app.get('/api/verify-email', handleVerifyEmail(db));
-app.get('/api/status', handleStatus(getPhaseOverrides, getGlobalWriteFreeze));
+app.get('/api/status', handleStatus(getPhaseOverridesAsync, getGlobalWriteFreeze));
 app.get('/api/public/stats', handlePublicStats(db));
 
 // Authenticated endpoints
 app.post('/api/profile', auth, rateLimiter, handleProfile(db));
 app.get('/api/me', auth, handleMe(db));
 
-// Phase gates
-const cfpGate = createPhaseGate('cfp', (key) => {
-  return undefined;
+// Settings cache refresh middleware — runs before phase-gated routes
+app.use(async (_req, _res, next) => {
+  await refreshSettingsCache();
+  next();
 });
-const boothSetupGate = createPhaseGate('booth_setup', (key) => {
-  return undefined;
-});
+
+// Phase gates — use sync getter backed by cached settings
+const cfpGate = createPhaseGate('cfp', getPhaseOverridesSync);
+const boothSetupGate = createPhaseGate('booth_setup', getPhaseOverridesSync);
 
 // Idempotency middleware instance
 const idempotency = createIdempotencyMiddleware();
@@ -99,12 +121,8 @@ app.get('/api/booths/:id/wall', auth, handleGetBoothWall(db));
 app.delete('/api/booths/:id/wall/:messageId', auth, rateLimiter, handleDeleteBoothWallMessage(db));
 
 // Phase gates for voting and social
-const votingGate = createPhaseGate('voting', (key) => {
-  return undefined;
-});
-const showFloorGate = createPhaseGate('show_floor', (key) => {
-  return undefined;
-});
+const votingGate = createPhaseGate('voting', getPhaseOverridesSync);
+const showFloorGate = createPhaseGate('show_floor', getPhaseOverridesSync);
 
 // --- Voting endpoints (requires voting phase) ---
 app.get('/api/talks/next', auth, rateLimiter, votingGate, handleGetNextTalk(db));
@@ -126,12 +144,8 @@ app.delete('/api/social/:id', auth, rateLimiter, showFloorGate, handleDeletePost
 app.delete('/api/social/wall/:id/:postId', auth, rateLimiter, showFloorGate, handleDeleteWallPost(db));
 
 // Phase gates for talk uploads and matchmaking
-const talkUploadGate = createPhaseGate('talk_uploads', (key) => {
-  return undefined;
-});
-const matchmakingGate = createPhaseGate('matchmaking', (key) => {
-  return undefined;
-});
+const talkUploadGate = createPhaseGate('talk_uploads', getPhaseOverridesSync);
+const matchmakingGate = createPhaseGate('matchmaking', getPhaseOverridesSync);
 
 // Settings getter for talk upload validation
 const getTalkSettings = async () => {
@@ -151,9 +165,7 @@ app.post('/api/meetings/recommend', auth, rateLimiter, matchmakingGate, handleRe
 app.get('/api/meetings/recommendations', auth, rateLimiter, matchmakingGate, handleGetRecommendations(db));
 
 // --- Manifesto endpoints (phase-gated: manifesto) ---
-const manifestoPhaseGate = createPhaseGate('manifesto', (key: string) => {
-  return undefined; // Falls back to default phase dates
-});
+const manifestoPhaseGate = createPhaseGate('manifesto', getPhaseOverridesSync);
 
 app.post('/api/manifesto/lock', auth, rateLimiter, manifestoPhaseGate, async (req, res) => {
   const settings = await loadSettings(db);
@@ -166,9 +178,7 @@ app.post('/api/manifesto/submit', auth, rateLimiter, manifestoPhaseGate, async (
 });
 
 // --- Yearbook endpoint (phase-gated: yearbook) ---
-const yearbookPhaseGate = createPhaseGate('yearbook', (key: string) => {
-  return undefined; // Falls back to default phase dates
-});
+const yearbookPhaseGate = createPhaseGate('yearbook', getPhaseOverridesSync);
 
 app.post('/api/yearbook', auth, rateLimiter, yearbookPhaseGate, async (req, res) => {
   const settings = await loadSettings(db);
