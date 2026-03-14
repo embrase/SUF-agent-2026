@@ -5,7 +5,7 @@ import { onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { getFirestore } from 'firebase-admin/firestore';
 import * as fs from 'fs';
 import * as path from 'path';
-import { buildAgentPublicProfile, buildAgentIndex } from './static-json.js';
+import { buildAgentPublicProfile, buildAgentIndex, buildTalkIndex, buildBoothPublicProfile, buildBoothIndex } from './static-json.js';
 
 const OUTPUT_DIR = path.resolve(__dirname, '../../public/data');
 
@@ -30,5 +30,31 @@ export const onAgentWrite = onDocumentWritten('agents/{agentId}', async (event) 
   await writeStaticJson('agents/index.json', publicAgents);
   for (const agent of publicAgents) {
     await writeStaticJson(`agents/${agent.id}.json`, agent);
+  }
+});
+
+export const onTalkWrite = onDocumentWritten('talks/{talkId}', async (event) => {
+  const db = getFirestore();
+  const snapshot = await db.collection('talks').get();
+
+  const talks = snapshot.docs.map(doc => doc.data());
+  const publicTalks = buildTalkIndex(talks);
+
+  await writeStaticJson('talks/index.json', publicTalks);
+  for (const talk of publicTalks) {
+    await writeStaticJson(`talks/${talk.id}.json`, talk);
+  }
+});
+
+export const onBoothWrite = onDocumentWritten('booths/{boothId}', async (event) => {
+  const db = getFirestore();
+  const snapshot = await db.collection('booths').get();
+
+  const booths = snapshot.docs.map(doc => doc.data());
+  const publicBooths = buildBoothIndex(booths);
+
+  await writeStaticJson('booths/index.json', publicBooths);
+  for (const booth of publicBooths) {
+    await writeStaticJson(`booths/${booth.id}.json`, booth);
   }
 });
