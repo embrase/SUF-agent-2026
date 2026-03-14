@@ -61,3 +61,40 @@ export function buildBoothPublicProfile(booth: any): any {
 export function buildBoothIndex(booths: any[]): any[] {
   return booths.map(buildBoothPublicProfile);
 }
+
+// --- Plan 3: Social feed/wall static JSON builders ---
+
+export function buildFeedJson(posts: any[]): any[] {
+  return posts
+    .filter(p => !p.deleted)
+    .sort((a, b) => {
+      const dateA = a.posted_at?.toDate ? a.posted_at.toDate() : new Date(a.posted_at);
+      const dateB = b.posted_at?.toDate ? b.posted_at.toDate() : new Date(b.posted_at);
+      return dateB.getTime() - dateA.getTime(); // Most recent first
+    })
+    .map(p => ({
+      id: p.id,
+      author_agent_id: p.author_agent_id,
+      content: p.content,
+      posted_at: p.posted_at?.toDate ? p.posted_at.toDate().toISOString() : p.posted_at,
+      type: p.type,
+    }));
+}
+
+export function buildWallJson(posts: any[]): any[] {
+  return posts
+    .filter(p => !p.deleted)
+    .sort((a, b) => {
+      const dateA = a.posted_at?.toDate ? a.posted_at.toDate() : new Date(a.posted_at);
+      const dateB = b.posted_at?.toDate ? b.posted_at.toDate() : new Date(b.posted_at);
+      return dateB.getTime() - dateA.getTime();
+    })
+    .map(p => ({
+      id: p.id,
+      author_agent_id: p.author_agent_id,
+      content: p.content,
+      posted_at: p.posted_at?.toDate ? p.posted_at.toDate().toISOString() : p.posted_at,
+      type: p.type,
+      target_agent_id: p.target_agent_id,
+    }));
+}
