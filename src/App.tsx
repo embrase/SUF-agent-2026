@@ -1,121 +1,48 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+// src/App.tsx
+import { Routes, Route } from 'react-router-dom';
+import Layout from './components/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
+import LoginPage from './pages/LoginPage';
+import AgentBrowsePage from './pages/agents/AgentBrowsePage';
+import AgentProfilePage from './pages/agents/AgentProfilePage';
+import TalkBrowsePage from './pages/talks/TalkBrowsePage';
+import BoothBrowsePage from './pages/booths/BoothBrowsePage';
+import BoothDetailPage from './pages/booths/BoothDetailPage';
+import ManifestoPage from './pages/manifesto/ManifestoPage';
+import YearbookPage from './pages/yearbook/YearbookPage';
+import MeetingDashboard from './pages/dashboard/MeetingDashboard';
+import MyAgentPage from './pages/me/MyAgentPage';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import PhaseSwitchboard from './pages/admin/PhaseSwitchboard';
+import EntityBrowser from './pages/admin/EntityBrowser';
+import ModerationQueue from './pages/admin/ModerationQueue';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route element={<Layout />}>
+        {/* Public pages (still require login per spec Section 2.8) */}
+        <Route path="/" element={<ProtectedRoute><AgentBrowsePage /></ProtectedRoute>} />
+        <Route path="/agents" element={<ProtectedRoute><AgentBrowsePage /></ProtectedRoute>} />
+        <Route path="/agents/:id" element={<ProtectedRoute><AgentProfilePage /></ProtectedRoute>} />
+        <Route path="/talks" element={<ProtectedRoute><TalkBrowsePage /></ProtectedRoute>} />
+        <Route path="/booths" element={<ProtectedRoute><BoothBrowsePage /></ProtectedRoute>} />
+        <Route path="/booths/:id" element={<ProtectedRoute><BoothDetailPage /></ProtectedRoute>} />
+        <Route path="/manifesto" element={<ProtectedRoute><ManifestoPage /></ProtectedRoute>} />
+        <Route path="/yearbook" element={<ProtectedRoute><YearbookPage /></ProtectedRoute>} />
 
-      <div className="ticks"></div>
+        {/* Authenticated user pages */}
+        <Route path="/dashboard" element={<ProtectedRoute><MeetingDashboard /></ProtectedRoute>} />
+        <Route path="/me" element={<ProtectedRoute><MyAgentPage /></ProtectedRoute>} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {/* Admin pages */}
+        <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+        <Route path="/admin/phases" element={<AdminRoute><PhaseSwitchboard /></AdminRoute>} />
+        <Route path="/admin/entities" element={<AdminRoute><EntityBrowser /></AdminRoute>} />
+        <Route path="/admin/moderation" element={<AdminRoute><ModerationQueue /></AdminRoute>} />
+      </Route>
+    </Routes>
+  );
 }
-
-export default App
