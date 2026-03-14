@@ -34,7 +34,7 @@ export function handleGetPhases(db: Firestore, now?: Date) {
 
 export function handleUpdatePhase(db: Firestore) {
   return async (req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const { key } = req.params;
+    const key = req.params.key as string;
     const { is_open, opens, closes, reason } = req.body;
 
     const phaseDef = PHASE_DEFINITIONS.find((p) => p.key === key);

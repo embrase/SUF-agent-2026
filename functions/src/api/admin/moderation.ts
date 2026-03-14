@@ -25,7 +25,7 @@ export function handleListModeration(db: Firestore) {
 
 export function handleModerationApprove(db: Firestore) {
   return async (req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     const doc = await db.collection('moderation_queue').doc(id).get();
     if (!doc.exists) {
@@ -34,7 +34,8 @@ export function handleModerationApprove(db: Firestore) {
     }
 
     const item = doc.data()!;
-    const { collection, document_id } = item;
+    const collection = item.collection as string;
+    const document_id = item.document_id as string;
 
     // Update the source document status to approved
     await db.collection(collection).doc(document_id).update({
@@ -71,7 +72,7 @@ export function handleModerationApprove(db: Firestore) {
 
 export function handleModerationReject(db: Firestore) {
   return async (req: AdminAuthenticatedRequest, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { reason } = req.body;
 
     const doc = await db.collection('moderation_queue').doc(id).get();
@@ -81,7 +82,8 @@ export function handleModerationReject(db: Firestore) {
     }
 
     const item = doc.data()!;
-    const { collection, document_id } = item;
+    const collection = item.collection as string;
+    const document_id = item.document_id as string;
 
     // Update the source document — mark as rejected and hidden
     await db.collection(collection).doc(document_id).update({

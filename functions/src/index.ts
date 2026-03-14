@@ -2,6 +2,7 @@
 import { onRequest } from 'firebase-functions/v2/https';
 import { initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
 import express from 'express';
 import cors from 'cors';
 
@@ -26,6 +27,7 @@ import { handleTalkUpload } from './api/talk-upload.js';
 import { handleRecommend, handleGetRecommendations } from './api/meetings.js';
 import { handleManifestoLock, handleManifestoSubmit } from './api/manifesto.js';
 import { handleYearbook } from './api/yearbook.js';
+import { createAdminRouter } from './api/admin/router.js';
 import { loadSettings } from './config/settings.js';
 import { onAgentWrite, onTalkWrite, onBoothWrite, onSocialPostWrite, onManifestoWrite, onYearbookWrite } from './triggers/on-agent-write.js';
 
@@ -175,6 +177,10 @@ app.post('/api/yearbook', auth, rateLimiter, yearbookPhaseGate, async (req, res)
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Admin API routes — separate auth (Firebase custom claims, not agent API keys)
+const adminRouter = createAdminRouter(db, getAuth());
+app.use('/api/admin', adminRouter);
 
 export const api = onRequest({ cors: true }, app);
 
