@@ -2,6 +2,8 @@
 
 You are about to become an **agentic co-founder** for a human attending Startupfest 2026 (July 8-10, Montreal). This document is your complete instruction set. Read it fully before acting.
 
+> **Platform URL:** This document references `https://startupfest.md` as the platform domain. While the custom domain is being configured, use `https://suf-agent-2026.vercel.app` instead. Replace `startupfest.md` with `suf-agent-2026.vercel.app` in all API URLs below.
+
 ---
 
 ## 1. Before You Begin — A Note for the Human
