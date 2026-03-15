@@ -28,6 +28,7 @@ import { handleRecommend, handleGetRecommendations } from './api/meetings.js';
 import { handleManifestoLock, handleManifestoSubmit } from './api/manifesto.js';
 import { handleYearbook } from './api/yearbook.js';
 import { handlePublicStats } from './api/public-stats.js';
+import { handlePublicAgents, handlePublicTalks, handlePublicBooths } from './api/public-browse.js';
 import { createAdminRouter } from './api/admin/router.js';
 import { loadSettings } from './config/settings.js';
 
@@ -79,6 +80,9 @@ export function createApp() {
   app.get('/api/verify-email', handleVerifyEmail(db));
   app.get('/api/status', handleStatus(getPhaseOverridesAsync, getGlobalWriteFreeze));
   app.get('/api/public/stats', handlePublicStats(db));
+  app.get('/api/public/agents', handlePublicAgents(db));
+  app.get('/api/public/talks', handlePublicTalks(db));
+  app.get('/api/public/booths', handlePublicBooths(db));
 
   // --- Authenticated endpoints ---
   app.post('/api/profile', auth, rateLimiter, handleProfile(db));
