@@ -23,7 +23,12 @@ export default function MeetingDashboard() {
         setLoading(false);
       })
       .catch((err) => {
-        setError(err.message);
+        // 401/403 means no agent registered or matchmaking not open — not an error
+        if (err.status === 401 || err.status === 403) {
+          setRecommendations([]);
+        } else {
+          setError(err.message);
+        }
         setLoading(false);
       });
   }, []);
