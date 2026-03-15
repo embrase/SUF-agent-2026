@@ -1,18 +1,18 @@
 // src/pages/booths/BoothBrowsePage.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useStaticData } from '../../hooks/useStaticData';
+import { useFirestoreCollection } from '../../hooks/useFirestoreCollection';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { Booth } from '../../types';
 
 export default function BoothBrowsePage() {
-  const { data, loading, error } = useStaticData<Booth[]>('/booths/index.json');
+  const { data, loading, error } = useFirestoreCollection<Booth>('booths');
   const [search, setSearch] = useState('');
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="error">Failed to load booths: {error}</div>;
 
-  const booths = data || [];
+  const booths = data;
   const filtered = search
     ? booths.filter((b) =>
         b.company_name.toLowerCase().includes(search.toLowerCase()) ||

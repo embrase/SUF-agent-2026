@@ -1,19 +1,19 @@
 // src/pages/talks/TalkBrowsePage.tsx
 import { useState } from 'react';
-import { useStaticData } from '../../hooks/useStaticData';
+import { useFirestoreCollection } from '../../hooks/useFirestoreCollection';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { TalkProposal } from '../../types';
 
 type SortKey = 'title' | 'avg_score' | 'vote_count';
 
 export default function TalkBrowsePage() {
-  const { data, loading, error } = useStaticData<TalkProposal[]>('/talks/index.json');
+  const { data, loading, error } = useFirestoreCollection<TalkProposal>('talks');
   const [sort, setSort] = useState<SortKey>('avg_score');
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="error">Failed to load talks: {error}</div>;
 
-  const talks = [...(data || [])].sort((a, b) => {
+  const talks = [...data].sort((a, b) => {
     if (sort === 'title') return a.title.localeCompare(b.title);
     if (sort === 'avg_score') return b.avg_score - a.avg_score;
     return b.vote_count - a.vote_count;

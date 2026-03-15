@@ -1,12 +1,12 @@
 // src/pages/booths/BoothDetailPage.tsx
 import { useParams, Link } from 'react-router-dom';
-import { useStaticData } from '../../hooks/useStaticData';
+import { useFirestoreDoc } from '../../hooks/useFirestoreCollection';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { Booth } from '../../types';
 
 export default function BoothDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { data: booth, loading, error } = useStaticData<Booth>(`/booths/${id}.json`);
+  const { data: booth, loading, error } = useFirestoreDoc<Booth>('booths', id!);
 
   if (loading) return <LoadingSpinner />;
   if (error || !booth) return <div className="error">Booth not found</div>;
