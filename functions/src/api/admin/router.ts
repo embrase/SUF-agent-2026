@@ -9,6 +9,7 @@ import { handleListTalks, handleListBooths, handleListSocial, handleHideContent,
 import { handleListModeration, handleModerationApprove, handleModerationReject } from './moderation.js';
 import { handleExport } from './export.js';
 import { handleTriggerBackup } from './backup.js';
+import { handleReset } from './reset.js';
 
 export function createAdminRouter(db: Firestore, auth: Auth): Router {
   const router = Router();
@@ -45,6 +46,9 @@ export function createAdminRouter(db: Firestore, auth: Auth): Router {
 
   // --- Backup ---
   router.post('/backup', requireAdmin, handleTriggerBackup(db));
+
+  // --- Platform Reset (destructive — requires confirm: "RESET") ---
+  router.post('/reset', requireAdmin, handleReset(db));
 
   return router;
 }
