@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { randomBytes } from 'crypto';
 import { writeAuditLog } from '../../lib/audit-log.js';
 import { AdminAuthenticatedRequest } from '../../middleware/admin-auth.js';
@@ -19,7 +19,7 @@ export function handleTriggerBackup(db: Firestore) {
       triggered_by_email: req.adminUser!.email,
       reason: reason || null,
       status: 'initiated',
-      timestamp: FieldValue.serverTimestamp(),
+      timestamp: new Date(),
       initiated_at: timestamp,
     });
 

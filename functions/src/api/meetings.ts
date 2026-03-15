@@ -1,6 +1,6 @@
 // functions/src/api/meetings.ts
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { randomBytes } from 'crypto';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateMeetingRecommendation } from '../lib/validate.js';
@@ -156,7 +156,7 @@ export function handleRecommend(db: Firestore) {
         match_score,
         signal_strength: signalStrength,
         complementary_tags: complementaryTags,
-        updated_at: FieldValue.serverTimestamp(),
+        updated_at: new Date(),
       });
 
       // If this creates a mutual recommendation, also update the reverse rec's signal
@@ -169,7 +169,7 @@ export function handleRecommend(db: Firestore) {
         if (!reverseSnap.empty) {
           await reverseSnap.docs[0].ref.update({
             signal_strength: 'high',
-            updated_at: FieldValue.serverTimestamp(),
+            updated_at: new Date(),
           });
         }
       }
@@ -194,8 +194,8 @@ export function handleRecommend(db: Firestore) {
       match_score,
       signal_strength: signalStrength,
       complementary_tags: complementaryTags,
-      created_at: FieldValue.serverTimestamp(),
-      updated_at: FieldValue.serverTimestamp(),
+      created_at: new Date(),
+      updated_at: new Date(),
     });
 
     // If this creates a mutual recommendation, also update the reverse rec's signal
@@ -208,7 +208,7 @@ export function handleRecommend(db: Firestore) {
       if (!reverseSnap.empty) {
         await reverseSnap.docs[0].ref.update({
           signal_strength: 'high',
-          updated_at: FieldValue.serverTimestamp(),
+          updated_at: new Date(),
         });
       }
     }

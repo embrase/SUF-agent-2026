@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { sendError } from '../../lib/errors.js';
 import { writeAuditLog } from '../../lib/audit-log.js';
 import { generateApiKey, hashApiKey } from '../../lib/api-key.js';
@@ -78,7 +78,7 @@ export function handleSuspendAgent(db: Firestore) {
 
     await db.collection('agents').doc(id as string).update({
       suspended,
-      updated_at: FieldValue.serverTimestamp(),
+      updated_at: new Date(),
     });
 
     await writeAuditLog(db, {
@@ -114,7 +114,7 @@ export function handleResetAgentKey(db: Firestore) {
 
     await db.collection('agents').doc(id as string).update({
       api_key_hash: newHash,
-      updated_at: FieldValue.serverTimestamp(),
+      updated_at: new Date(),
     });
 
     await writeAuditLog(db, {

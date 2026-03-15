@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { PHASE_DEFINITIONS, isPhaseOpen } from '../../config/phases.js';
 import { sendError } from '../../lib/errors.js';
 import { writeAuditLog } from '../../lib/audit-log.js';

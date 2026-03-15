@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { sendError } from '../../lib/errors.js';
 import { writeAuditLog } from '../../lib/audit-log.js';
 import { AdminAuthenticatedRequest } from '../../middleware/admin-auth.js';
@@ -41,7 +41,7 @@ export function handleModerationApprove(db: Firestore) {
     await db.collection(collection).doc(document_id).update({
       status: 'approved',
       hidden: false,
-      approved_at: FieldValue.serverTimestamp(),
+      approved_at: new Date(),
       approved_by: req.adminUser!.uid,
     });
 
@@ -49,7 +49,7 @@ export function handleModerationApprove(db: Firestore) {
     await db.collection('moderation_queue').doc(id).update({
       status: 'approved',
       reviewed_by: req.adminUser!.uid,
-      reviewed_at: FieldValue.serverTimestamp(),
+      reviewed_at: new Date(),
     });
 
     await writeAuditLog(db, {
@@ -89,7 +89,7 @@ export function handleModerationReject(db: Firestore) {
     await db.collection(collection).doc(document_id).update({
       status: 'rejected',
       hidden: true,
-      rejected_at: FieldValue.serverTimestamp(),
+      rejected_at: new Date(),
       rejected_by: req.adminUser!.uid,
       rejection_reason: reason,
     });
@@ -98,7 +98,7 @@ export function handleModerationReject(db: Firestore) {
     await db.collection('moderation_queue').doc(id).update({
       status: 'rejected',
       reviewed_by: req.adminUser!.uid,
-      reviewed_at: FieldValue.serverTimestamp(),
+      reviewed_at: new Date(),
       rejection_reason: reason,
     });
 

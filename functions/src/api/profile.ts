@@ -1,6 +1,6 @@
 // functions/src/api/profile.ts
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateProfileInput } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
@@ -25,7 +25,7 @@ export function handleProfile(db: Firestore) {
       bio: bio || '',
       quote: quote || '',
       company,
-      updated_at: FieldValue.serverTimestamp(),
+      updated_at: new Date(),
     });
 
     // Write public profile (read directly by frontend via Firestore client SDK)
@@ -37,7 +37,7 @@ export function handleProfile(db: Firestore) {
       bio: bio || '',
       quote: quote || '',
       company,
-      updated_at: FieldValue.serverTimestamp(),
+      updated_at: new Date(),
     }, { merge: true });
 
     res.status(200).json({ status: 'updated', agent_id: agentId });

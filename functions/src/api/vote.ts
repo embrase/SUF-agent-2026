@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateVoteInput } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
@@ -110,7 +110,7 @@ export function handleVote(db: Firestore, settings: PlatformSettings) {
     const isUpdate = existingVote.exists;
 
     // Write vote (create or overwrite)
-    const now = FieldValue.serverTimestamp();
+    const now = new Date();
     await voteRef.set({
       agent_id: agentId,
       proposal_id,

@@ -1,6 +1,6 @@
 // functions/src/api/manifesto.ts
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateManifestoSubmit } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';

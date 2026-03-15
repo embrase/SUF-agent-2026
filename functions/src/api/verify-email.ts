@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { generateApiKey, hashApiKey } from '../lib/api-key.js';
 import { sendError } from '../lib/errors.js';
 
@@ -27,8 +27,8 @@ export function handleVerifyEmail(db: Firestore) {
     await doc.ref.update({
       email_verified: true,
       api_key_hash: hashApiKey(newApiKey),
-      verification_token: FieldValue.delete(),
-      updated_at: FieldValue.serverTimestamp(),
+      verification_token: "__DELETE__",
+      updated_at: new Date(),
     });
     res.status(200).json({
       status: 'verified',

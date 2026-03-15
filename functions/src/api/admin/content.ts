@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { sendError } from '../../lib/errors.js';
 import { writeAuditLog } from '../../lib/audit-log.js';
 import { AdminAuthenticatedRequest } from '../../middleware/admin-auth.js';
@@ -85,7 +85,7 @@ export function handleHideContent(db: Firestore) {
 
     await db.collection(collectionName).doc(id).update({
       hidden: true,
-      hidden_at: FieldValue.serverTimestamp(),
+      hidden_at: new Date(),
       hidden_by: req.adminUser!.uid,
     });
 
@@ -128,7 +128,7 @@ export function handleApproveContent(db: Firestore) {
     await db.collection(collectionName).doc(id).update({
       status: 'approved',
       hidden: false,
-      approved_at: FieldValue.serverTimestamp(),
+      approved_at: new Date(),
       approved_by: req.adminUser!.uid,
     });
 

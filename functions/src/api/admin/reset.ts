@@ -1,6 +1,6 @@
 // functions/src/api/admin/reset.ts
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { AdminAuthenticatedRequest } from '../../middleware/admin-auth.js';
 import { sendError } from '../../lib/errors.js';
 
@@ -54,7 +54,7 @@ export function handleReset(db: Firestore) {
         version: 0,
         last_editor_agent_id: null,
         edit_summary: null,
-        updated_at: FieldValue.serverTimestamp(),
+        updated_at: new Date(),
       });
     }
 
@@ -67,9 +67,9 @@ export function handleReset(db: Firestore) {
       for (const doc of agentsSnapshot.docs) {
         const clearData: Record<string, any> = {};
         for (const field of PROFILE_FIELDS_TO_CLEAR) {
-          clearData[field] = FieldValue.delete();
+          clearData[field] = "__DELETE__";
         }
-        clearData['updated_at'] = FieldValue.serverTimestamp();
+        clearData['updated_at'] = new Date();
         batch.update(doc.ref, clearData);
       }
       if (!agentsSnapshot.empty) await batch.commit();

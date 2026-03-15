@@ -1,6 +1,6 @@
 // functions/src/api/talk-upload.ts
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateTalkUpload } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
@@ -47,8 +47,8 @@ export function handleTalkUpload(db: Firestore, getSettings: SettingsGetter) {
       language: language.toUpperCase(),
       duration,
       thumbnail: thumbnail || '',
-      uploaded_at: FieldValue.serverTimestamp(),
-      updated_at: FieldValue.serverTimestamp(),
+      uploaded_at: new Date(),
+      updated_at: new Date(),
     });
 
     res.status(201).json({

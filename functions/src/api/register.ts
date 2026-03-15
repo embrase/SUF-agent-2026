@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { randomBytes } from 'crypto';
 import { validateEmail } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
@@ -37,8 +37,8 @@ export function handleRegister(db: Firestore, mailer: Mailer) {
       api_key_hash: '',
       verification_token: verificationToken,
       suspended: false,
-      created_at: FieldValue.serverTimestamp(),
-      updated_at: FieldValue.serverTimestamp(),
+      created_at: new Date(),
+      updated_at: new Date(),
     };
 
     await db.collection('agents').doc(agentId).set(agentData);
