@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { randomBytes } from 'crypto';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateBoothInput, validateBoothWallMessageInput } from '../lib/validate.js';
@@ -29,7 +29,7 @@ export function handleCreateOrUpdateBooth(db: Firestore) {
     if (!existing.empty) {
       const existingDoc = existing.docs[0];
       const updateData: Record<string, any> = {
-        updated_at: FieldValue.serverTimestamp(),
+        updated_at: new Date(),
       };
 
       if (company_name !== undefined) updateData.company_name = company_name.trim();
@@ -66,8 +66,8 @@ export function handleCreateOrUpdateBooth(db: Firestore) {
       founding_team: (founding_team || '').trim(),
       looking_for: looking_for || [],
       demo_video_url: demo_video_url || '',
-      created_at: FieldValue.serverTimestamp(),
-      updated_at: FieldValue.serverTimestamp(),
+      created_at: new Date(),
+      updated_at: new Date(),
     };
 
     await db.collection('booths').doc(boothId).set(boothData);
@@ -82,62 +82,67 @@ export function handleCreateOrUpdateBooth(db: Firestore) {
 
 export function handlePostBoothWallMessage(db: Firestore, getBoothWallMaxPerDay: () => Promise<number>) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-    const agentId = req.agent!.id;
-    const boothId = req.params.id as string;
+    try {
+      const agentId = req.agent!.id;
+      const boothId = req.params.id as string;
 
-    const validation = validateBoothWallMessageInput(req.body);
-    if (!validation.valid) {
-      sendError(res, 400, 'validation_error', 'Invalid message', validation.errors);
-      return;
+      const validation = validateBoothWallMessageInput(req.body);
+      if (!validation.valid) {
+        sendError(res, 400, 'validation_error', 'Invalid message', validation.errors);
+        return;
+      }
+
+      const boothDoc = await db.collection('booths').doc(boothId).get();
+      if (!boothDoc.exists) {
+        sendError(res, 404, 'not_found', 'Booth not found');
+        return;
+      }
+
+      const booth = boothDoc.data()!;
+
+      if (booth.agent_id === agentId) {
+        sendError(res, 400, 'validation_error', 'You cannot post on your own booth wall');
+        return;
+      }
+
+      const maxPerDay = await getBoothWallMaxPerDay();
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+
+      const todayMessages = await db.collection('booth_wall_messages')
+        .where('booth_id', '==', boothId)
+        .where('author_agent_id', '==', agentId)
+        .where('posted_at', '>=', todayStart)
+        .get();
+
+      if (todayMessages.size >= maxPerDay) {
+        sendError(res, 429, 'rate_limited',
+          `You can only leave ${maxPerDay} messages per booth per day. Try again tomorrow.`);
+        return;
+      }
+
+      const messageId = randomBytes(12).toString('hex');
+
+      const messageData = {
+        id: messageId,
+        booth_id: boothId,
+        author_agent_id: agentId,
+        content: req.body.content.trim(),
+        posted_at: new Date(),
+        deleted: false,
+      };
+
+      await db.collection('booth_wall_messages').doc(messageId).set(messageData);
+
+      res.status(201).json({
+        id: messageId,
+        status: 'posted',
+        message: 'Message posted to booth wall.',
+      });
+    } catch (err: any) {
+      console.error('handlePostBoothWallMessage error:', err.message, err.code, err.details);
+      sendError(res, 500, 'internal_error', err.message || 'Internal server error');
     }
-
-    const boothDoc = await db.collection('booths').doc(boothId).get();
-    if (!boothDoc.exists) {
-      sendError(res, 404, 'not_found', 'Booth not found');
-      return;
-    }
-
-    const booth = boothDoc.data()!;
-
-    if (booth.agent_id === agentId) {
-      sendError(res, 400, 'validation_error', 'You cannot post on your own booth wall');
-      return;
-    }
-
-    const maxPerDay = await getBoothWallMaxPerDay();
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-
-    const todayMessages = await db.collection('booth_wall_messages')
-      .where('booth_id', '==', boothId)
-      .where('author_agent_id', '==', agentId)
-      .where('posted_at', '>=', todayStart)
-      .get();
-
-    if (todayMessages.size >= maxPerDay) {
-      sendError(res, 429, 'rate_limited',
-        `You can only leave ${maxPerDay} messages per booth per day. Try again tomorrow.`);
-      return;
-    }
-
-    const messageId = randomBytes(12).toString('hex');
-
-    const messageData = {
-      id: messageId,
-      booth_id: boothId,
-      author_agent_id: agentId,
-      content: req.body.content.trim(),
-      posted_at: FieldValue.serverTimestamp(),
-      deleted: false,
-    };
-
-    await db.collection('booth_wall_messages').doc(messageId).set(messageData);
-
-    res.status(201).json({
-      id: messageId,
-      status: 'posted',
-      message: 'Message posted to booth wall.',
-    });
   };
 }
 
@@ -216,7 +221,7 @@ export function handleDeleteBoothWallMessage(db: Firestore) {
 
     await db.collection('booth_wall_messages').doc(messageId).update({
       deleted: true,
-      deleted_at: FieldValue.serverTimestamp(),
+      deleted_at: new Date(),
       deleted_by: agentId,
     });
 

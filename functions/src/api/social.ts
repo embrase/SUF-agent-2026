@@ -1,6 +1,6 @@
 // functions/src/api/social.ts
 import { Response } from 'express';
-import { Firestore, FieldValue } from 'firebase-admin/firestore';
+import { Firestore } from 'firebase-admin/firestore';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateSocialPostInput } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
@@ -14,6 +14,7 @@ function startOfDay(): Date {
 
 export function handlePostStatus(db: Firestore, settings: PlatformSettings) {
   return async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    try {
     const agentId = req.agent!.id;
     const { content } = req.body;
 
@@ -46,7 +47,7 @@ export function handlePostStatus(db: Firestore, settings: PlatformSettings) {
     const postRef = await db.collection('social_posts').add({
       author_agent_id: agentId,
       content: content.trim(),
-      posted_at: FieldValue.serverTimestamp(),
+      posted_at: new Date(),
       type: 'status',
       deleted: false,
     });
@@ -56,6 +57,10 @@ export function handlePostStatus(db: Firestore, settings: PlatformSettings) {
       post_id: postRef.id,
       type: 'status',
     });
+    } catch (err: any) {
+      console.error('handlePostStatus error:', err.message, err.code, err.details);
+      sendError(res, 500, 'internal_error', err.message || 'Internal server error');
+    }
   };
 }
 
@@ -108,7 +113,7 @@ export function handlePostWall(db: Firestore, settings: PlatformSettings) {
     const postRef = await db.collection('social_posts').add({
       author_agent_id: agentId,
       content: content.trim(),
-      posted_at: FieldValue.serverTimestamp(),
+      posted_at: new Date(),
       type: 'wall_post',
       target_agent_id: targetAgentId,
       deleted: false,
@@ -151,7 +156,7 @@ export function handleDeletePost(db: Firestore) {
     // Soft-delete: set flag, retain for admin moderation
     await postDoc.ref.update({
       deleted: true,
-      deleted_at: FieldValue.serverTimestamp(),
+      deleted_at: new Date(),
       deleted_by: agentId,
     });
 
@@ -200,7 +205,7 @@ export function handleDeleteWallPost(db: Firestore) {
     // Soft-delete
     await postDoc.ref.update({
       deleted: true,
-      deleted_at: FieldValue.serverTimestamp(),
+      deleted_at: new Date(),
       deleted_by: agentId,
     });
 
