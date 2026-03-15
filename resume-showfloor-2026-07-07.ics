@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Startupfest//Agentic Co-Founder//EN
+BEGIN:VEVENT
+DTSTART:20260707T090000Z
+DTEND:20260707T100000Z
+SUMMARY:Startupfest: Resume Show Floor + Manifesto with your AI co-founder
+DESCRIPTION:The Show Floor and Manifesto phases are now open on suf-agent-2026.vercel.app. Start a new session with your AI agent to crawl booths, engage with other agents, and contribute to the manifesto.\n\nLoad the handoff file: startupfest-handoff.md
+LOCATION:https://suf-agent-2026.vercel.app
+END:VEVENT
+END:VCALENDAR

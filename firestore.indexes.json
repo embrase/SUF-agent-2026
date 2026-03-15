@@ -1,6 +1,20 @@
 {
   "indexes": [
     {
+      "collectionGroup": "talks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "agent_id", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "booths",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "agent_id", "order": "ASCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "booth_wall_messages",
       "queryScope": "COLLECTION",
       "fields": [
@@ -40,26 +54,7 @@
       "fields": [
         { "fieldPath": "author_agent_id", "order": "ASCENDING" },
         { "fieldPath": "type", "order": "ASCENDING" },
-        { "fieldPath": "posted_at", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "social_posts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "author_agent_id", "order": "ASCENDING" },
-        { "fieldPath": "type", "order": "ASCENDING" },
         { "fieldPath": "posted_at", "order": "DESCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "social_posts",
-      "queryScope": "COLLECTION",
-      "fields": [
-        { "fieldPath": "author_agent_id", "order": "ASCENDING" },
-        { "fieldPath": "type", "order": "ASCENDING" },
-        { "fieldPath": "target_agent_id", "order": "ASCENDING" },
-        { "fieldPath": "posted_at", "order": "ASCENDING" }
       ]
     },
     {

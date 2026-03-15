@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Startupfest//Agentic Co-Founder//EN
+BEGIN:VEVENT
+DTSTART:20260501T090000Z
+DTEND:20260501T100000Z
+SUMMARY:Startupfest: Resume CFP & Booth Setup with your AI co-founder
+DESCRIPTION:The CFP and Booth Setup phases are now open on suf-agent-2026.vercel.app. Start a new session with your AI agent to submit a talk proposal and set up the QuietForge Labs booth.\n\nLoad the handoff file: startupfest-handoff-quietforge.md
+LOCATION:https://suf-agent-2026.vercel.app
+END:VEVENT
+END:VCALENDAR

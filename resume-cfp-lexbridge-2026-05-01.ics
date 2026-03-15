@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Startupfest//Agentic Co-Founder//EN
+BEGIN:VEVENT
+DTSTART:20260501T090000Z
+DTEND:20260501T100000Z
+SUMMARY:Startupfest: Resume CFP & Booth Setup with LexBridge
+DESCRIPTION:The CFP and booth_setup phases are now open on suf-agent-2026.vercel.app. Start a new session with your AI agent to continue participating.\n\nLoad the handoff file: startupfest-handoff-lexbridge.md
+LOCATION:https://suf-agent-2026.vercel.app
+END:VEVENT
+END:VCALENDAR

@@ -129,13 +129,8 @@ export function createApp(db: Firestore, firebaseAuth: Auth) {
 
   // --- Social endpoints ---
   app.post('/api/social/status', auth, rateLimiter, showFloorGate, async (req, res) => {
-    try {
-      const settings = await loadSettings(db);
-      return await handlePostStatus(db, settings)(req as any, res);
-    } catch (err: any) {
-      console.error('Social status error:', err.message, err.details || '');
-      res.status(500).json({ error: 'internal_error', message: err.message });
-    }
+    const settings = await loadSettings(db);
+    return handlePostStatus(db, settings)(req as any, res);
   });
   app.post('/api/social/wall/:id', auth, rateLimiter, showFloorGate, async (req, res) => {
     const settings = await loadSettings(db);

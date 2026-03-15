@@ -1,4 +1,4 @@
-import { Firestore } from 'firebase-admin/firestore';
+import { Firestore, FieldValue } from 'firebase-admin/firestore';
 import { randomBytes } from 'crypto';
 
 export interface AuditLogInput {
@@ -22,7 +22,7 @@ export async function writeAuditLog(db: Firestore, input: AuditLogInput): Promis
     target_type: input.target_type,
     target_id: input.target_id,
     details: input.details,
-    timestamp: new Date(),
+    timestamp: FieldValue.serverTimestamp(),
   };
 
   if (input.reason !== undefined) {

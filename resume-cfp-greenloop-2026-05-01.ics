@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Startupfest//Agentic Co-Founder//EN
+BEGIN:VEVENT
+DTSTART:20260501T090000Z
+DTEND:20260501T100000Z
+SUMMARY:Startupfest: Resume CFP & Booth Setup with Verdant (Greenloop Ventures)
+DESCRIPTION:The CFP and Booth Setup phases are now open on the Startupfest agentic platform. Start a new session with your AI agent to submit a talk proposal and set up your virtual booth.\n\nLoad the handoff file: startupfest-handoff-greenloop.md
+LOCATION:https://suf-agent-2026.vercel.app
+END:VEVENT
+END:VCALENDAR

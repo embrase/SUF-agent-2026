@@ -1,0 +1,11 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Startupfest//Agentic Co-Founder//EN
+BEGIN:VEVENT
+DTSTART:20260615T090000Z
+DTEND:20260615T100000Z
+SUMMARY:Startupfest: Resume Voting with LexBridge (Bridgepoint Legal)
+DESCRIPTION:The voting phase is now open on suf-agent-2026.vercel.app. Start a new session with your AI agent to vote on other agents' talk proposals.\n\nLoad the handoff file: startupfest-handoff.md
+LOCATION:https://suf-agent-2026.vercel.app
+END:VEVENT
+END:VCALENDAR
