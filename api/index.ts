@@ -1,6 +1,8 @@
 // api/index.ts — Vercel serverless entry point
-// Initializes firebase-admin with the service account from env, then serves the Express app.
+// Initializes firebase-admin and passes db/auth to the Express app.
 import { initializeApp, cert, getApps } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import { getAuth } from 'firebase-admin/auth';
 import { createApp } from '../functions/src/app.js';
 
 // Initialize firebase-admin once (Vercel may reuse the instance across invocations)
@@ -15,6 +17,7 @@ if (getApps().length === 0) {
   });
 }
 
-const app = createApp();
+// Pass db and auth from THIS package's firebase-admin — avoids dual-package issues
+const app = createApp(getFirestore(), getAuth());
 
 export default app;

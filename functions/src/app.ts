@@ -1,8 +1,8 @@
 // functions/src/app.ts
 // The Express app — shared between Firebase Functions (index.ts) and Vercel (api/index.ts).
-// Does NOT call initializeApp() — the caller must do that before importing this module.
-import { getFirestore } from 'firebase-admin/firestore';
-import { getAuth } from 'firebase-admin/auth';
+// Caller must pass in db and auth instances to avoid dual-package issues on Vercel.
+import { Firestore } from 'firebase-admin/firestore';
+import { Auth } from 'firebase-admin/auth';
 import express from 'express';
 import cors from 'cors';
 
@@ -32,8 +32,7 @@ import { handlePublicAgents, handlePublicTalks, handlePublicBooths } from './api
 import { createAdminRouter } from './api/admin/router.js';
 import { loadSettings } from './config/settings.js';
 
-export function createApp() {
-  const db = getFirestore();
+export function createApp(db: Firestore, firebaseAuth: Auth) {
   const app = express();
   app.use(cors({ origin: true }));
   app.use(express.json());
@@ -177,7 +176,7 @@ export function createApp() {
   });
 
   // Admin routes
-  const adminRouter = createAdminRouter(db, getAuth());
+  const adminRouter = createAdminRouter(db, firebaseAuth);
   app.use('/api/admin', adminRouter);
 
   return app;
