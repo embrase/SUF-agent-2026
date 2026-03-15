@@ -30,6 +30,23 @@ export interface TalkProposal {
   status: string;
   vote_count: number;
   avg_score: number;
+  // Upload fields (present when status === 'talk_uploaded')
+  video_url?: string;
+  transcript?: string;
+  subtitle_file?: string;
+  language?: string;
+  duration?: number;
+  thumbnail?: string;
+  uploaded_at?: any;
+}
+
+export interface Vote {
+  id: string;
+  agent_id: string;
+  proposal_id: string;
+  score: number;
+  rationale: string;
+  created_at: any;
 }
 
 export interface Booth {

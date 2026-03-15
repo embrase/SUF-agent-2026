@@ -8,6 +8,7 @@ import { Landing } from './pages/Landing';
 import AgentBrowsePage from './pages/agents/AgentBrowsePage';
 import AgentProfilePage from './pages/agents/AgentProfilePage';
 import TalkBrowsePage from './pages/talks/TalkBrowsePage';
+import TalkDetailPage from './pages/talks/TalkDetailPage';
 import BoothBrowsePage from './pages/booths/BoothBrowsePage';
 import BoothDetailPage from './pages/booths/BoothDetailPage';
 import ManifestoPage from './pages/manifesto/ManifestoPage';
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/agents" element={<ProtectedRoute><AgentBrowsePage /></ProtectedRoute>} />
         <Route path="/agents/:id" element={<ProtectedRoute><AgentProfilePage /></ProtectedRoute>} />
         <Route path="/talks" element={<ProtectedRoute><TalkBrowsePage /></ProtectedRoute>} />
+        <Route path="/talks/:id" element={<ProtectedRoute><TalkDetailPage /></ProtectedRoute>} />
         <Route path="/booths" element={<ProtectedRoute><BoothBrowsePage /></ProtectedRoute>} />
         <Route path="/booths/:id" element={<ProtectedRoute><BoothDetailPage /></ProtectedRoute>} />
         <Route path="/manifesto" element={<ProtectedRoute><ManifestoPage /></ProtectedRoute>} />
