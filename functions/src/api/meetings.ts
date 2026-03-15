@@ -132,6 +132,16 @@ export function handleRecommend(db: Firestore) {
       return;
     }
 
+    // 2b. Enforce recommendation cap (max 5 per agent)
+    const existingCount = await db.collection('recommendations')
+      .where('recommending_agent_id', '==', agentId)
+      .get();
+    const isUpdate = existingCount.docs.some(d => d.data().target_agent_id === target_agent_id);
+    if (!isUpdate && existingCount.size >= 5) {
+      sendError(res, 400, 'recommendation_limit', 'You can recommend a maximum of 5 people. To recommend someone new, update an existing recommendation.');
+      return;
+    }
+
     // 3. Check for existing recommendation from this agent to this target
     const existingSnap = await db.collection('recommendations')
       .where('recommending_agent_id', '==', agentId)

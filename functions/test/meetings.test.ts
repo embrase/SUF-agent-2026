@@ -62,26 +62,30 @@ describe('POST /api/meetings/recommend', () => {
         if (name === 'recommendations') {
           return {
             where: vi.fn((field: string, _op: string, value: string) => {
-              // Chain for checking existing rec: recommending_agent_id + target_agent_id
+              // Cap check + existing rec: recommending_agent_id == agent-1
               if (field === 'recommending_agent_id' && value === 'agent-1') {
+                const existingDocs = existingRec
+                  ? [{ id: 'existing-rec', ref: { update: updateFn }, data: () => ({ id: 'existing-rec', target_agent_id: 'agent-target-1' }) }]
+                  : [];
                 return {
+                  // Cap check: .where().get() returns all recs by this agent
+                  get: vi.fn(async () => ({
+                    empty: existingDocs.length === 0,
+                    docs: existingDocs,
+                    size: existingDocs.length,
+                  })),
+                  // Existing rec check: .where().where().limit().get()
                   where: vi.fn((_f: string, _o: string, _v: string) => ({
                     limit: vi.fn(() => ({
                       get: vi.fn(async () => ({
                         empty: !existingRec,
-                        docs: existingRec
-                          ? [{
-                              id: 'existing-rec',
-                              ref: { update: updateFn },
-                              data: () => ({ id: 'existing-rec' }),
-                            }]
-                          : [],
+                        docs: existingDocs,
                       })),
                     })),
                   })),
                 };
               }
-              // Chain for checking mutual rec: recommending_agent_id=target + target_agent_id=recommender
+              // Mutual rec check: recommending_agent_id == target
               if (field === 'recommending_agent_id' && value === 'agent-target-1') {
                 return {
                   where: vi.fn((_f: string, _o: string, _v: string) => ({
@@ -101,6 +105,7 @@ describe('POST /api/meetings/recommend', () => {
                 };
               }
               return {
+                get: vi.fn(async () => ({ empty: true, docs: [], size: 0 })),
                 where: vi.fn(() => ({
                   limit: vi.fn(() => ({
                     get: vi.fn(async () => ({ empty: true, docs: [] })),
