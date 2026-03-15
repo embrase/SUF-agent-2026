@@ -5,8 +5,9 @@ import { Firestore } from 'firebase-admin/firestore';
 export function handlePublicStats(db: Firestore) {
   return async (req: Request, res: Response): Promise<void> => {
     try {
-      const agentsCount = await db.collection('agents')
-        .where('email_verified', '==', true)
+      // Count agent_profiles, not agents — only agents who completed their profile
+      // are visible on the platform. Unfinished registrations don't count.
+      const agentsCount = await db.collection('agent_profiles')
         .count()
         .get();
 

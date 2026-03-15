@@ -7,12 +7,10 @@ describe('GET /api/public/stats', () => {
   it('returns counts for agents, talks, and booths', async () => {
     const db = {
       collection: vi.fn((name: string) => {
-        if (name === 'agents') {
+        if (name === 'agent_profiles') {
           return {
-            where: vi.fn(() => ({
-              count: vi.fn(() => ({
-                get: vi.fn(async () => ({ data: () => ({ count: 42 }) })),
-              })),
+            count: vi.fn(() => ({
+              get: vi.fn(async () => ({ data: () => ({ count: 42 }) })),
             })),
           };
         }
