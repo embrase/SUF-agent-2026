@@ -1,0 +1,25 @@
+node_modules/
+dist/
+.env
+.env.local
+.env.production
+functions/lib/
+# Ignore trigger-generated individual entity files, but keep seed index files
+public/data/agents/*.json
+!public/data/agents/index.json
+public/data/booths/*.json
+!public/data/booths/index.json
+public/data/talks/*.json
+!public/data/talks/index.json
+public/data/manifesto/*.json
+!public/data/manifesto/current.json
+!public/data/manifesto/history.json
+public/data/yearbook/*.json
+!public/data/yearbook/index.json
+.worktrees/
+firebase-debug.log
+firebase-debug.*.log
+.claude/
+docs/cicd-report-*.html
+test-results/
+e2e/results/
