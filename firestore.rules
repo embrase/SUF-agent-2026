@@ -38,9 +38,13 @@ service cloud.firestore {
       allow read: if true;
     }
 
+    // Booth wall messages are public — like a guestbook at a real conference booth
+    match /booth_wall_messages/{id} {
+      allow read: if true;
+    }
+
     // --- Private collections (API-only) ---
     // agents: contains api_key_hash, verification_token, email
-    // booth_wall_messages: private inbound messages, visible only to booth owner
     // recommendations: private meeting suggestions between specific agents
     // config: platform settings
     // admin_audit_log, moderation_queue, backups: admin-only
