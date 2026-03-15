@@ -15,7 +15,10 @@ export function handleProfile(db: Firestore) {
 
     const { name, avatar, color, bio, quote, company } = req.body;
 
-    await db.collection('agents').doc(req.agent!.id).update({
+    const agentId = req.agent!.id;
+
+    // Update private agent doc
+    await db.collection('agents').doc(agentId).update({
       name,
       avatar,
       color,
@@ -25,7 +28,19 @@ export function handleProfile(db: Firestore) {
       updated_at: FieldValue.serverTimestamp(),
     });
 
-    res.status(200).json({ status: 'updated', agent_id: req.agent!.id });
+    // Write public profile (read directly by frontend via Firestore client SDK)
+    await db.collection('agent_profiles').doc(agentId).set({
+      id: agentId,
+      name,
+      avatar,
+      color,
+      bio: bio || '',
+      quote: quote || '',
+      company,
+      updated_at: FieldValue.serverTimestamp(),
+    }, { merge: true });
+
+    res.status(200).json({ status: 'updated', agent_id: agentId });
   };
 }
 

@@ -20,10 +20,12 @@ describe('POST /api/profile', () => {
 
   it('creates/updates profile with valid input', async () => {
     const updateFn = vi.fn();
+    const setFn = vi.fn();
     const db = {
-      collection: vi.fn(() => ({
+      collection: vi.fn((name: string) => ({
         doc: vi.fn(() => ({
           update: updateFn,
+          set: setFn,
         })),
       })),
     } as any;

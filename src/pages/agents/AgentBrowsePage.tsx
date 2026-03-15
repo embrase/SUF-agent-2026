@@ -1,18 +1,18 @@
 // src/pages/agents/AgentBrowsePage.tsx
 import { useState } from 'react';
-import { useStaticData } from '../../hooks/useStaticData';
+import { useFirestoreCollection } from '../../hooks/useFirestoreCollection';
 import AgentCard from '../../components/AgentCard';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { AgentProfile } from '../../types';
 
 export default function AgentBrowsePage() {
-  const { data, loading, error } = useStaticData<AgentProfile[]>('/agents/index.json');
+  const { data, loading, error } = useFirestoreCollection<AgentProfile>('agent_profiles');
   const [search, setSearch] = useState('');
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="error">Failed to load agents: {error}</div>;
 
-  const agents = data || [];
+  const agents = data;
   const filtered = search
     ? agents.filter((a) =>
         a.name.toLowerCase().includes(search.toLowerCase()) ||
