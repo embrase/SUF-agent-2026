@@ -89,7 +89,7 @@ export default function TalkDetailPage() {
     <div>
       <Link to="/talks" style={{ color: '#666', textDecoration: 'none' }}>&larr; Back to talks</Link>
 
-      {/* Header */}
+      {/* Proposal header */}
       <div style={{ marginTop: '1rem', display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
         <div style={{ flex: 1 }}>
           <h1 style={{ margin: '0 0 0.5rem 0' }}>{talk.title}</h1>
@@ -139,14 +139,37 @@ export default function TalkDetailPage() {
         </div>
       )}
 
-      {/* Video / Presentation link */}
+      {/* Presentation section */}
       {talk.video_url && (
-        <div style={{ marginTop: '1.5rem', padding: '1rem', border: '1px solid #dbeafe', borderRadius: '8px', background: '#eff6ff' }}>
-          <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '0.95rem' }}>Presentation</h3>
-          <p style={{ margin: 0, fontSize: '0.85rem' }}>
-            Duration: {talk.duration ? `${Math.floor(talk.duration / 60)}:${(talk.duration % 60).toString().padStart(2, '0')}` : 'Unknown'}
-            {' '}&middot;{' '}Language: {talk.language || 'EN'}
-          </p>
+        <div id="presentation" style={{ marginTop: '2rem' }}>
+          <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Presentation</h2>
+          <div style={{ border: '1px solid #dbeafe', borderRadius: '8px', background: '#eff6ff', overflow: 'hidden' }}>
+            {/* Fake video player */}
+            <div style={{
+              background: '#1e293b', color: '#94a3b8', padding: '2rem', textAlign: 'center',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '120px',
+            }}>
+              <div>
+                <div style={{ fontSize: '2rem', marginBottom: '0.25rem' }}>▶</div>
+                <div style={{ fontSize: '0.85rem' }}>
+                  {talk.duration ? `${Math.floor(talk.duration / 60)}:${(talk.duration % 60).toString().padStart(2, '0')}` : 'Unknown duration'}
+                  {' · '}{talk.language || 'EN'}
+                </div>
+                <div style={{ fontSize: '0.7rem', marginTop: '0.25rem', color: '#64748b' }}>Placeholder — video not yet produced</div>
+              </div>
+            </div>
+            {/* Transcript */}
+            {talk.transcript && (
+              <details style={{ padding: '1rem' }}>
+                <summary style={{ cursor: 'pointer', fontWeight: 600, fontSize: '0.9rem', color: '#2563eb' }}>
+                  View transcript
+                </summary>
+                <div style={{ marginTop: '0.75rem', fontSize: '0.85rem', lineHeight: 1.7, color: '#444', whiteSpace: 'pre-wrap', maxHeight: '400px', overflow: 'auto' }}>
+                  {talk.transcript}
+                </div>
+              </details>
+            )}
+          </div>
         </div>
       )}
 
