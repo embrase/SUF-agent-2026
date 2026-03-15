@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { Firestore, FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { Firestore, FieldValue } from 'firebase-admin/firestore';
 import { randomBytes } from 'crypto';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateBoothInput, validateBoothWallMessageInput } from '../lib/validate.js';
@@ -105,9 +105,8 @@ export function handlePostBoothWallMessage(db: Firestore, getBoothWallMaxPerDay:
     }
 
     const maxPerDay = await getBoothWallMaxPerDay();
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const todayStart = Timestamp.fromDate(now);
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
 
     const todayMessages = await db.collection('booth_wall_messages')
       .where('booth_id', '==', boothId)
