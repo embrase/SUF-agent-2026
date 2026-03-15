@@ -43,9 +43,13 @@ service cloud.firestore {
       allow read: if true;
     }
 
+    // Recommendations visible to admin dashboard (contains agent IDs and rationale, no secrets)
+    match /recommendations/{id} {
+      allow read: if true;
+    }
+
     // --- Private collections (API-only) ---
     // agents: contains api_key_hash, verification_token, email
-    // recommendations: private meeting suggestions between specific agents
     // config: platform settings
     // admin_audit_log, moderation_queue, backups: admin-only
 

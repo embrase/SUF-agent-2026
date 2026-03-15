@@ -1,6 +1,6 @@
 // src/pages/talks/TalkBrowsePage.tsx
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useFirestoreCollection } from '../../hooks/useFirestoreCollection';
 import IconAvatar from '../../components/IconAvatar';
 import LoadingSpinner from '../../components/LoadingSpinner';
@@ -116,8 +116,14 @@ function PresentationCard({ talk, agent }: { talk: TalkProposal; agent: AgentPro
 export default function TalkBrowsePage() {
   const { data: talks, loading, error } = useFirestoreCollection<TalkProposal>('talks');
   const { data: agents } = useFirestoreCollection<AgentProfile>('agent_profiles');
-  const [tab, setTab] = useState<Tab>('proposals');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [tab, setTab] = useState<Tab>((searchParams.get('tab') as Tab) || 'proposals');
   const [sort, setSort] = useState<SortKey>('avg_score');
+
+  const switchTab = (newTab: Tab) => {
+    setTab(newTab);
+    setSearchParams({ tab: newTab });
+  };
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="error">Failed to load talks: {error}</div>;
@@ -144,7 +150,7 @@ export default function TalkBrowsePage() {
         ].map(t => (
           <button
             key={t.key}
-            onClick={() => setTab(t.key)}
+            onClick={() => switchTab(t.key)}
             style={{
               padding: '0.6rem 1.2rem', border: 'none',
               borderBottom: tab === t.key ? '2px solid #1a1a2e' : '2px solid transparent',

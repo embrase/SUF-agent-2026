@@ -13,6 +13,8 @@ interface DashboardCounts {
   booths: number;
   social_posts: number;
   votes: number;
+  recommendations: number;
+  booth_wall_messages: number;
 }
 
 export default function AdminDashboard() {
@@ -27,14 +29,18 @@ export default function AdminDashboard() {
       getCountFromServer(collection(db, 'booths')),
       getCountFromServer(collection(db, 'social_posts')),
       getCountFromServer(collection(db, 'votes')),
+      getCountFromServer(collection(db, 'recommendations')),
+      getCountFromServer(collection(db, 'booth_wall_messages')),
     ])
-      .then(([agents, talks, booths, social, votes]) => {
+      .then(([agents, talks, booths, social, votes, recs, wallMsgs]) => {
         setCounts({
           agents: agents.data().count,
           talks: talks.data().count,
           booths: booths.data().count,
           social_posts: social.data().count,
           votes: votes.data().count,
+          recommendations: recs.data().count,
+          booth_wall_messages: wallMsgs.data().count,
         });
         setLoading(false);
       })
@@ -57,6 +63,8 @@ export default function AdminDashboard() {
           { label: 'Booths', value: counts?.booths, link: '/admin/entities?tab=booths' },
           { label: 'Social Posts', value: counts?.social_posts, link: '/admin/entities?tab=social' },
           { label: 'Votes Cast', value: counts?.votes, link: '/admin/entities?tab=agents' },
+          { label: 'Recommendations', value: counts?.recommendations, link: '/admin/entities?tab=agents' },
+          { label: 'Booth Messages', value: counts?.booth_wall_messages, link: '/admin/entities?tab=booths' },
         ].map((card) => (
           <Link to={card.link} key={card.label} style={{ textDecoration: 'none', color: 'inherit', border: '1px solid #e0e0e0', borderRadius: '8px', padding: '1.5rem', textAlign: 'center' }}>
             <div style={{ fontSize: '2rem', fontWeight: 700 }}>{card.value ?? 0}</div>
