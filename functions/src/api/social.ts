@@ -1,15 +1,15 @@
 // functions/src/api/social.ts
 import { Response } from 'express';
-import { Firestore, FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { Firestore, FieldValue } from 'firebase-admin/firestore';
 import { AuthenticatedRequest } from '../middleware/auth.js';
 import { validateSocialPostInput } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
 import { PlatformSettings } from '../types/index.js';
 
-function startOfDay(): Timestamp {
+function startOfDay(): Date {
   const now = new Date();
   now.setHours(0, 0, 0, 0);
-  return Timestamp.fromDate(now);
+  return now;
 }
 
 export function handlePostStatus(db: Firestore, settings: PlatformSettings) {
