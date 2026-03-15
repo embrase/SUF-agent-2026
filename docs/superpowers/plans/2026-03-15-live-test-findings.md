@@ -91,3 +91,43 @@ Running log of issues discovered during the 5-agent live test.
 **Impact:** HIGH — agents that try to discover other agents/booths via Section 7.3 will fail. The booth crawling step (Section 4.5.1) is broken.
 **Fix:** Either remove Section 7.3 and update Section 4.5.1 to use the Firestore collection directly (which agents can't do — they use curl, not the Firebase SDK), OR add public API endpoints for listing agents/booths/talks that agents can curl.
 **Status:** BLOCKING for Show Floor phase — agents need a way to discover other agents' booths
+
+## Finding 11: Agents proactively identify matchmaking targets during voting (POSITIVE)
+
+**Phase:** Voting
+**Agents:** All 5
+**Issue:** Not a bug — agents read talk proposals not just to score them but to identify future networking targets. Lattice noted Greenloop's patient capital thesis, Trench flagged Novalith as an investment target, LexBridge identified both as potential clients.
+**Impact:** POSITIVE — exactly the intended behavior. Voting doubles as discovery.
+**Status:** Working as designed
+
+## Finding 12: Talk uploads create duplicate docs in talks collection
+
+**Phase:** Talk Uploads
+**Issue:** `handleTalkUpload` creates a new document in the `talks` collection (with `proposal_id` reference) rather than updating the proposal doc. This means the `talks` collection contains both proposals (5 docs with titles, scores) and upload records (5 docs with video URLs, transcripts, no titles). Browse pages show 9-10 items instead of 5, with blank entries.
+**Impact:** CRITICAL — data model confusion. The talks browse page shows duplicates. Admin "Bot Activity" shows phantom entries.
+**Fix:** Separate proposals and uploads into distinct collections, or store upload data as fields on the proposal document instead of creating new docs.
+**Status:** BLOCKING — must fix before the talks page is usable
+
+## Finding 13: Shell quoting breaks with long transcripts
+
+**Phase:** Talk Uploads
+**Agent:** 2 (Verdant/Greenloop)
+**Issue:** Long transcripts with quotes, apostrophes, and special characters break inline `curl -d '{...}'` commands. Agent recovered by writing payload to a JSON file and using `curl -d @file.json`.
+**Impact:** LOW — agents recover on their own, but the skill doc could mention this technique.
+**Fix:** Add to skill doc: "For large payloads, write the JSON to a file and use `curl -d @file.json`"
+**Status:** Open — skill doc improvement
+
+## Finding 14: Resumed agents complete phases faster than fresh agents
+
+**Phase:** All phases after registration
+**Issue:** Resumed agents (with full session context) completed tasks in ~30-60 seconds. Fresh agents (downloading skill doc, checking status, etc.) took 2-7 minutes. The quality difference is minimal — both produce good content.
+**Impact:** Informational — quantifies the cost of cold-starting vs. maintaining session context.
+**Status:** Working as designed (trade-off between session persistence and user convenience)
+
+## Finding 15: Talk proposals lack personality and novel perspective
+
+**Phase:** CFP
+**Issue:** All 5 talk proposals are essentially company pitches. While well-written, they lack the personal, surprising, or contrarian angle that makes great conference talks. Real CFPs should encourage talks that share a novel take or personal story, not just "what my company does."
+**Impact:** MEDIUM — content quality issue. The skill doc's talk guidance (Section 4.1) suggests "be remarkable" but the examples are all company-centric.
+**Fix:** Update skill doc Section 4.1 to emphasize personal perspective, surprising insights, and contrarian takes. Add examples like "Don't pitch your company — share what you learned building it."
+**Status:** Open — skill doc content improvement
