@@ -1,7 +1,7 @@
 // functions/test/talk-upload.test.ts
 import { describe, it, expect, vi } from 'vitest';
 import { handleTalkUpload } from '../src/api/talk-upload.js';
-import { createMockResponse, createMockFirestore } from './helpers/firebase-mock.js';
+import { createMockResponse } from './helpers/firebase-mock.js';
 
 describe('POST /api/talks/:id/upload', () => {
   const validBody = {
@@ -21,13 +21,11 @@ describe('POST /api/talks/:id/upload', () => {
     proposalExists?: boolean;
     proposalAgentId?: string;
     proposalStatus?: string;
-    talkAlreadyExists?: boolean;
   } = {}) {
     const {
       proposalExists = true,
       proposalAgentId = 'agent-1',
       proposalStatus = 'submitted',
-      talkAlreadyExists = false,
     } = overrides;
 
     const proposalData = {
@@ -37,12 +35,8 @@ describe('POST /api/talks/:id/upload', () => {
       status: proposalStatus,
     };
 
-    const setFn = vi.fn();
     const updateFn = vi.fn();
 
-    // Both proposal lookup and talk upload use the 'talks' collection.
-    // doc(proposalId).get() returns the proposal; doc(talkId).set() saves the talk;
-    // where().limit().get() checks for existing uploads.
     const db = {
       collection: vi.fn((name: string) => {
         if (name === 'talks') {
@@ -53,28 +47,17 @@ describe('POST /api/talks/:id/upload', () => {
                 data: () => id === 'proposal-1' ? proposalData : undefined,
                 id,
               })),
-              set: setFn,
               update: updateFn,
-            })),
-            where: vi.fn(() => ({
-              limit: vi.fn(() => ({
-                get: vi.fn(async () => ({
-                  empty: !talkAlreadyExists,
-                  docs: talkAlreadyExists
-                    ? [{ id: 'existing-talk', data: () => ({ id: 'existing-talk' }) }]
-                    : [],
-                })),
-              })),
             })),
           };
         }
-        return { doc: vi.fn(), where: vi.fn() };
+        return { doc: vi.fn() };
       }),
     } as any;
 
     const getSettings = vi.fn(async () => mockSettings);
 
-    return { db, setFn, updateFn, getSettings };
+    return { db, updateFn, getSettings };
   }
 
   it('rejects upload when proposal does not exist', async () => {
@@ -171,8 +154,8 @@ describe('POST /api/talks/:id/upload', () => {
     expect(res.body.details).toHaveProperty('language');
   });
 
-  it('successfully uploads talk and updates proposal status', async () => {
-    const { db, setFn, updateFn, getSettings } = createHandler();
+  it('successfully uploads talk by merging into proposal doc', async () => {
+    const { db, updateFn, getSettings } = createHandler();
     const req = {
       agent: { id: 'agent-1' },
       params: { id: 'proposal-1' },
@@ -184,26 +167,21 @@ describe('POST /api/talks/:id/upload', () => {
 
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe('talk_uploaded');
-    expect(res.body.talk_id).toBeDefined();
+    expect(res.body.talk_id).toBe('proposal-1');
+    expect(res.body.proposal_id).toBe('proposal-1');
 
-    // Verify talk was saved
-    expect(setFn).toHaveBeenCalledTimes(1);
-    const savedTalk = setFn.mock.calls[0][0];
-    expect(savedTalk.video_url).toBe(validBody.video_url);
-    expect(savedTalk.transcript).toBe(validBody.transcript);
-    expect(savedTalk.language).toBe('EN');
-    expect(savedTalk.duration).toBe(420);
-    expect(savedTalk.proposal_id).toBe('proposal-1');
-    expect(savedTalk.agent_id).toBe('agent-1');
-
-    // Verify proposal status updated
+    // Upload data merged into the proposal doc via update
     expect(updateFn).toHaveBeenCalledTimes(1);
     const updateArgs = updateFn.mock.calls[0][0];
     expect(updateArgs.status).toBe('talk_uploaded');
+    expect(updateArgs.video_url).toBe(validBody.video_url);
+    expect(updateArgs.transcript).toBe(validBody.transcript);
+    expect(updateArgs.language).toBe('EN');
+    expect(updateArgs.duration).toBe(420);
   });
 
   it('includes optional subtitle_file when provided', async () => {
-    const { db, setFn, getSettings } = createHandler();
+    const { db, updateFn, getSettings } = createHandler();
     const req = {
       agent: { id: 'agent-1' },
       params: { id: 'proposal-1' },
@@ -214,12 +192,12 @@ describe('POST /api/talks/:id/upload', () => {
     await handleTalkUpload(db, getSettings)(req, res as any);
 
     expect(res.statusCode).toBe(201);
-    const savedTalk = setFn.mock.calls[0][0];
-    expect(savedTalk.subtitle_file).toBe('https://example.com/subs.srt');
+    const updateArgs = updateFn.mock.calls[0][0];
+    expect(updateArgs.subtitle_file).toBe('https://example.com/subs.srt');
   });
 
   it('includes optional thumbnail when provided', async () => {
-    const { db, setFn, getSettings } = createHandler();
+    const { db, updateFn, getSettings } = createHandler();
     const req = {
       agent: { id: 'agent-1' },
       params: { id: 'proposal-1' },
@@ -230,12 +208,12 @@ describe('POST /api/talks/:id/upload', () => {
     await handleTalkUpload(db, getSettings)(req, res as any);
 
     expect(res.statusCode).toBe(201);
-    const savedTalk = setFn.mock.calls[0][0];
-    expect(savedTalk.thumbnail).toBe('https://example.com/thumb.jpg');
+    const updateArgs = updateFn.mock.calls[0][0];
+    expect(updateArgs.thumbnail).toBe('https://example.com/thumb.jpg');
   });
 
-  it('overwrites existing talk for the same proposal (re-upload)', async () => {
-    const { db, setFn, getSettings } = createHandler({ talkAlreadyExists: true });
+  it('allows re-upload (idempotent update)', async () => {
+    const { db, updateFn, getSettings } = createHandler({ proposalStatus: 'talk_uploaded' });
     const req = {
       agent: { id: 'agent-1' },
       params: { id: 'proposal-1' },
@@ -245,27 +223,13 @@ describe('POST /api/talks/:id/upload', () => {
 
     await handleTalkUpload(db, getSettings)(req, res as any);
 
-    // Should succeed — agents can re-upload to update their talk
     expect(res.statusCode).toBe(201);
-    expect(setFn).toHaveBeenCalledTimes(1);
+    const updateArgs = updateFn.mock.calls[0][0];
+    expect(updateArgs.video_url).toBe('https://storage.example.com/updated-talk.mp4');
   });
 
-  it('allows upload regardless of proposal vote outcome (accepted status)', async () => {
+  it('allows upload regardless of proposal vote outcome', async () => {
     const { db, getSettings } = createHandler({ proposalStatus: 'accepted' });
-    const req = {
-      agent: { id: 'agent-1' },
-      params: { id: 'proposal-1' },
-      body: validBody,
-    } as any;
-    const res = createMockResponse();
-
-    await handleTalkUpload(db, getSettings)(req, res as any);
-
-    expect(res.statusCode).toBe(201);
-  });
-
-  it('allows upload regardless of proposal vote outcome (not_selected status)', async () => {
-    const { db, getSettings } = createHandler({ proposalStatus: 'not_selected' });
     const req = {
       agent: { id: 'agent-1' },
       params: { id: 'proposal-1' },
