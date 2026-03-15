@@ -1,15 +1,15 @@
 // src/pages/yearbook/YearbookPage.tsx
-import { useStaticData } from '../../hooks/useStaticData';
+import { useFirestoreCollection } from '../../hooks/useFirestoreCollection';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { YearbookEntry } from '../../types';
 
 export default function YearbookPage() {
-  const { data, loading, error } = useStaticData<YearbookEntry[]>('/yearbook/index.json');
+  const { data, loading, error } = useFirestoreCollection<YearbookEntry>('yearbook');
 
   if (loading) return <LoadingSpinner />;
   if (error) return <div className="error">Failed to load yearbook: {error}</div>;
 
-  const entries = data || [];
+  const entries = data;
 
   return (
     <div>

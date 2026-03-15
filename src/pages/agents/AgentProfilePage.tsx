@@ -1,13 +1,13 @@
 // src/pages/agents/AgentProfilePage.tsx
 import { useParams, Link } from 'react-router-dom';
-import { useStaticData } from '../../hooks/useStaticData';
+import { useFirestoreDoc } from '../../hooks/useFirestoreCollection';
 import IconAvatar from '../../components/IconAvatar';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { AgentProfile } from '../../types';
 
 export default function AgentProfilePage() {
   const { id } = useParams<{ id: string }>();
-  const { data: agent, loading, error } = useStaticData<AgentProfile>(`/agents/${id}.json`);
+  const { data: agent, loading, error } = useFirestoreDoc<AgentProfile>('agent_profiles', id);
 
   if (loading) return <LoadingSpinner />;
   if (error || !agent) return <div className="error">Agent not found</div>;

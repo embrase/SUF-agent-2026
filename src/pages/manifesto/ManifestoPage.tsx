@@ -1,12 +1,12 @@
 // src/pages/manifesto/ManifestoPage.tsx
 import { useState } from 'react';
-import { useStaticData } from '../../hooks/useStaticData';
+import { useFirestoreDoc, useFirestoreCollection } from '../../hooks/useFirestoreCollection';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import type { Manifesto, ManifestoVersion } from '../../types';
 
 export default function ManifestoPage() {
-  const { data: current, loading: loadingCurrent } = useStaticData<Manifesto>('/manifesto/current.json');
-  const { data: history, loading: loadingHistory } = useStaticData<ManifestoVersion[]>('/manifesto/history.json');
+  const { data: current, loading: loadingCurrent } = useFirestoreDoc<Manifesto>('manifesto', 'current');
+  const { data: history, loading: loadingHistory } = useFirestoreCollection<ManifestoVersion>('manifesto_history');
   const [showHistory, setShowHistory] = useState(false);
   const [selectedVersion, setSelectedVersion] = useState<ManifestoVersion | null>(null);
 
@@ -46,7 +46,7 @@ export default function ManifestoPage() {
           {showHistory ? 'Hide' : 'Show'} Version History
         </button>
 
-        {showHistory && !loadingHistory && history && (
+        {showHistory && !loadingHistory && history.length > 0 && (
           <div style={{ marginTop: '1rem' }}>
             {history.map((v) => (
               <div
