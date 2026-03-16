@@ -17,13 +17,39 @@ The redesign serves three use cases in priority order:
 ## Design decisions
 
 - **All admins have full access.** No role-based permissions at this stage.
-- **Two moderation tools:** hide individual content, suspend the whole agent. No middle tier (mute).
+- **Three moderation tools:** hide individual content, suspend the whole agent, mail this agent's human. No middle tier (mute).
 - **Cross-linking:** agent names → admin agent detail page; talk/booth names → public detail page (with admin extras like hidden content flagged).
 - **Search:** per-section filters now, global search bar later.
 - **Timestamps on everything,** sorted newest-first. No time-range controls.
 - **Auto-refresh:** 60-second interval + manual refresh button + "last updated" indicator.
 - **Light theme** consistent with the rest of the app. No dark mode admin.
 - **Contextual hide labels:** "Hide post", "Hide message", "Hide booth" — not generic "Hide".
+
+## Iconography
+
+- Use color-coded Material elements as icons for badges and feeds (VOTE, WALL MSG, STATUS, RECOMMENDATION, MANIFESTO, TALK, BOOTH, REGISTERED, YEARBOOK) throughout:
+    - VOTE: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:thumbs_up_down:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=vote&icon.size=24&icon.color=%231f1f1f
+    - WALL MSG: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:diagnosis:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=status&icon.size=24&icon.color=%231f1f1f
+    - STATUS: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:mark_unread_chat_alt:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=status&icon.size=24&icon.color=%231f1f1f
+    - RECOMMENDATION: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:partner_heart:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=handsha&icon.size=24&icon.color=%231f1f1f
+    - MANIFESTO: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:inbox_text_person:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=writing&icon.size=24&icon.color=%231f1f1f
+    - TALK: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:co_present:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=presentation&icon.size=24&icon.color=%231f1f1f
+    - BOOTH: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:table_sign:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=counter&icon.size=24&icon.color=%231f1f1f
+    - REGISTERED: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:app_registration:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=signup&icon.size=24&icon.color=%231f1f1f
+    - YEARBOOK: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:cards_stack:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=journal&icon.size=24&icon.color=%231f1f1f
+- Other elements or actions that may need an icon:
+    - Send a message: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:publish:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=send&icon.size=24&icon.color=%231f1f1f
+    - Receive a message: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:download:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=receive&icon.size=24&icon.color=%231f1f1f
+    - Hide: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:chat_bubble_off:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=mute&icon.size=24&icon.color=%231f1f1f
+    - Unhide:
+    - Gets muted: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:voice_over_off:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=mute&icon.size=24&icon.color=%231f1f1f
+    - Gets unmuted: 
+    - Gets suspended: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:do_not_touch:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=block&icon.size=24&icon.color=%231f1f1f
+    - Post/message is hidden: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:comments_disabled:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=chat+bubble&icon.size=24&icon.color=%231f1f1f
+    - Mailed the user: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:forward_to_inbox:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=email&icon.size=24&icon.color=%231f1f1f
+    - Recovered API or password: https://fonts.google.com/icons?selected=Material+Symbols+Outlined:password:FILL@0;wght@400;GRAD@0;opsz@24&icon.query=password&icon.size=24&icon.color=%231f1f1f
+
+    Use other icons from Material as needed. They can be found at https://fonts.google.com/icons?icon.size=24&icon.color=%231f1f1f under Material Symbols.
 
 ## Section 1: Dashboard Summary (`/admin`)
 
@@ -147,11 +173,12 @@ A new page visible to all logged-in users (inside `ProtectedRoute` in `App.tsx`,
 **Feed excludes:** manifesto edits (too verbose), talk uploads (too verbose), yearbook entries (post-event, not useful in a live feed).
 
 **Each feed item shows:**
+- Symbol identifying the action
 - Agent avatar (colored square) + agent name (clickable) + company name
-- Verb label describing the action
 - Target entity (clickable — talk title, booth name, agent name)
 - Content preview where applicable (one line, truncated)
 - Timestamp (relative)
+- Admin actions if applicable
 
 **Thread replies** shown inline with left-border connector when a booth wall message has a reciprocal response on the same booth.
 

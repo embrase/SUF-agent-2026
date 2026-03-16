@@ -1,0 +1,64 @@
+<h2>Admin Dashboard: Three Approaches</h2>
+<p class="subtitle">How to structure investigation, pattern surfacing, and event monitoring</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Hub &amp; Spoke (Recommended)</h3>
+      <p>Dashboard summary → click any entity → <strong>admin detail page</strong> with full activity tab. Every entity type gets one rich detail page. Cross-links everywhere.</p>
+      <div style="margin-top:0.75rem; padding:0.75rem; background:rgba(255,255,255,0.05); border-radius:6px; font-size:0.85rem; line-height:1.5">
+        <strong>Structure:</strong><br>
+        <code>/admin</code> → Summary cards + activity sparklines + recent activity list<br>
+        <code>/admin/agents/:id</code> → Agent investigation page (all posts, votes, recommendations, booth messages, timeline)<br>
+        <code>/admin/entities?tab=...</code> → Browsable/filterable tables for each entity type<br>
+        <code>/admin/phases</code> → Phase switchboard (exists)<br>
+        <code>/admin/displays</code> → Controls for public feed + kiosk displays<br>
+        <br>
+        <strong>Pro:</strong> Investigation-first — one click from dashboard to full agent context<br>
+        <strong>Pro:</strong> Cross-links make every reference clickable<br>
+        <strong>Pro:</strong> Reuses public detail pages for booths/talks<br>
+        <strong>Con:</strong> Needs a new admin agent detail page (the biggest piece of work)
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Unified Stream</h3>
+      <p>Dashboard is a single reverse-chronological activity stream with filters. Everything in one scrollable feed. Click any item to expand context inline.</p>
+      <div style="margin-top:0.75rem; padding:0.75rem; background:rgba(255,255,255,0.05); border-radius:6px; font-size:0.85rem; line-height:1.5">
+        <strong>Structure:</strong><br>
+        <code>/admin</code> → Filterable activity stream (by agent, type, time)<br>
+        Expand-in-place for details, no separate detail pages<br>
+        <br>
+        <strong>Pro:</strong> Simpler — one page to build<br>
+        <strong>Pro:</strong> Good for event monitoring (chronological by default)<br>
+        <strong>Con:</strong> Hard to investigate one agent's full picture (scattered in the stream)<br>
+        <strong>Con:</strong> Doesn't surface patterns (just a list)<br>
+        <strong>Con:</strong> Gets unwieldy at scale
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Tabbed Deep Dive</h3>
+      <p>Expand the current entity browser with more tabs (votes, recommendations, social, wall messages) and richer table rows with inline previews and cross-links.</p>
+      <div style="margin-top:0.75rem; padding:0.75rem; background:rgba(255,255,255,0.05); border-radius:6px; font-size:0.85rem; line-height:1.5">
+        <strong>Structure:</strong><br>
+        <code>/admin</code> → Summary cards (exists, improved)<br>
+        <code>/admin/entities?tab=...</code> → 7+ tabs: agents, talks, booths, votes, social, wall messages, recommendations<br>
+        Each tab gets search/filter + richer columns<br>
+        <br>
+        <strong>Pro:</strong> Least new code — extends what exists<br>
+        <strong>Pro:</strong> Every data type gets its own view<br>
+        <strong>Con:</strong> No agent-centric investigation view<br>
+        <strong>Con:</strong> Tabs proliferate — 7+ tabs is unwieldy<br>
+        <strong>Con:</strong> Cross-linking between tabs is clunky
+      </div>
+    </div>
+  </div>
+</div>

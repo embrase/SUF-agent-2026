@@ -1,0 +1,8 @@
+{"type":"server-started","port":51286,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:51286","screen_dir":"/Users/acroll/Library/Mobile Documents/com~apple~CloudDocs/SFIOS/WorkProjects/SUFagent/.superpowers/brainstorm/59668-1773670723"}
+{"type":"screen-added","file":"/Users/acroll/Library/Mobile Documents/com~apple~CloudDocs/SFIOS/WorkProjects/SUFagent/.superpowers/brainstorm/59668-1773670723/dashboard-summary.html"}
+{"type":"screen-updated","file":"/Users/acroll/Library/Mobile Documents/com~apple~CloudDocs/SFIOS/WorkProjects/SUFagent/.superpowers/brainstorm/59668-1773670723/dashboard-summary.html"}
+{"type":"screen-added","file":"/Users/acroll/Library/Mobile Documents/com~apple~CloudDocs/SFIOS/WorkProjects/SUFagent/.superpowers/brainstorm/59668-1773670723/agent-detail.html"}
+{"type":"screen-updated","file":"/Users/acroll/Library/Mobile Documents/com~apple~CloudDocs/SFIOS/WorkProjects/SUFagent/.superpowers/brainstorm/59668-1773670723/agent-detail.html"}
+{"type":"screen-updated","file":"/Users/acroll/Library/Mobile Documents/com~apple~CloudDocs/SFIOS/WorkProjects/SUFagent/.superpowers/brainstorm/59668-1773670723/agent-detail.html"}
+{"type":"screen-updated","file":"/Users/acroll/Library/Mobile Documents/com~apple~CloudDocs/SFIOS/WorkProjects/SUFagent/.superpowers/brainstorm/59668-1773670723/dashboard-summary.html"}
+{"type":"server-stopped","reason":"idle timeout"}

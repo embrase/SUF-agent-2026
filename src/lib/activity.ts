@@ -1,7 +1,7 @@
 // src/lib/activity.ts
 // Merges items from multiple Firestore collections into a sorted, typed activity stream.
 
-import { ActivityType } from './icons';
+import type { ActivityType } from './icons';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -136,12 +136,6 @@ export function buildActivityFeed(options: BuildOptions): ActivityItem[] {
       agentColor: a?.color,
       companyName: a?.company,
     };
-  }
-
-  // Helper to check agentId filter
-  function byAgent(id: string): boolean {
-    if (!agentId) return true;
-    return id === agentId;
   }
 
   // Helper to push item if it passes the agentId + excludeTypes filters

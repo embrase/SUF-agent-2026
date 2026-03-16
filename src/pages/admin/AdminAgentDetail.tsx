@@ -249,12 +249,7 @@ export default function AdminAgentDetail() {
     );
   }
 
-  // ── Signal strength CSS class ───────────────────────────────────────────
-  const signalClass = (s: string) => {
-    if (s === 'high') return styles.signalHigh;
-    if (s === 'medium') return styles.signalMedium;
-    return styles.signalLow;
-  };
+
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (

@@ -23,3 +23,5 @@ firebase-debug.*.log
 docs/cicd-report-*.html
 test-results/
 e2e/results/
+test-run-*-roster.json
+scripts/rekey-agents.mjs
