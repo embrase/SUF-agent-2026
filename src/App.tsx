@@ -59,9 +59,10 @@ export default function App() {
         <Route path="/admin/agents/:id" element={<AdminRoute><Suspense fallback={<LoadingSpinner />}><AdminAgentDetail /></Suspense></AdminRoute>} />
         <Route path="/admin/displays" element={<AdminRoute><Suspense fallback={<LoadingSpinner />}><DisplayControls /></Suspense></AdminRoute>} />
 
-        {/* Public display (no auth) */}
-        <Route path="/display/kiosk" element={<Suspense fallback={<LoadingSpinner />}><KioskPage /></Suspense>} />
       </Route>
+
+      {/* Public display — outside Layout, no nav bar */}
+      <Route path="/display/kiosk" element={<Suspense fallback={<LoadingSpinner />}><KioskPage /></Suspense>} />
     </Routes>
   );
 }

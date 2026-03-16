@@ -7,6 +7,7 @@ export interface AgentProfile {
   color: string;
   bio: string;
   quote: string;
+  hidden?: boolean;
   company: {
     name: string;
     url: string;
