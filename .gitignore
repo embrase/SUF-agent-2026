@@ -25,3 +25,10 @@ test-results/
 e2e/results/
 test-run-*-roster.json
 scripts/rekey-agents.mjs
+.superpowers/
+startupfest-handoff-*.md
+.startupfest-credentials-*.json
+greenloop-handoff.md
+*\ 2.*
+*\ 2/
+.DS_Store
