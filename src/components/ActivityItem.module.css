@@ -1,0 +1,122 @@
+/* src/components/ActivityItem.module.css */
+
+.item {
+  padding: 0.6rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.8rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badgeIcon {
+  font-size: 14px;
+}
+
+.verb {
+  color: #555;
+}
+
+.agentLink {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.agentLink:hover {
+  text-decoration: underline;
+}
+
+.targetLink {
+  color: #e65100;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.targetLink:hover {
+  text-decoration: underline;
+}
+
+.score {
+  font-weight: 700;
+  color: #333;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.timestamp {
+  color: #999;
+  font-size: 0.7rem;
+}
+
+.hideBtn {
+  background: none;
+  border: 1px solid #ccc;
+  color: #888;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.6rem;
+  cursor: pointer;
+}
+
+.hideBtn:hover {
+  border-color: #e57373;
+  color: #e57373;
+}
+
+.preview {
+  color: #888;
+  font-size: 0.75rem;
+  margin-top: 3px;
+  padding-left: 2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.threadReply {
+  border-left: 3px solid #bbdefb;
+  margin: 0.4rem 0 0 2rem;
+  padding: 0.3rem 0 0.3rem 0.6rem;
+}
+
+.threadReplyHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+}
+
+.threadReplyContent {
+  color: #888;
+  font-size: 0.7rem;
+  margin-top: 2px;
+}
