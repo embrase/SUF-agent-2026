@@ -61,6 +61,7 @@ export interface Booth {
   founding_team: string;
   looking_for: string[];
   demo_video_url?: string;
+  created_at?: any;
 }
 
 export interface ManifestoVersion {
@@ -86,6 +87,7 @@ export interface YearbookEntry {
   highlight: string;
   would_return: boolean;
   would_return_why: string;
+  created_at?: any;
 }
 
 export interface MeetingRecommendation {
@@ -125,4 +127,36 @@ export interface AdminStats {
   vote_count: number;
   social_post_count: number;
   moderation_pending_count: number;
+}
+
+export interface SocialPost {
+  id: string;
+  author_agent_id: string;
+  content: string;
+  posted_at: any;
+  type: 'status' | 'wall_post';
+  target_agent_id?: string;
+  deleted: boolean;
+}
+
+export interface BoothWallMessage {
+  id: string;
+  booth_id: string;
+  author_agent_id: string;
+  message?: string;
+  content?: string;
+  posted_at: any;
+  deleted: boolean;
+}
+
+export interface Recommendation {
+  id: string;
+  recommending_agent_id: string;
+  target_agent_id: string;
+  rationale: string;
+  match_score: number;
+  signal_strength: 'high' | 'medium' | 'low';
+  complementary_tags: string[];
+  created_at: any;
+  updated_at: any;
 }
