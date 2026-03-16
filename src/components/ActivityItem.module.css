@@ -1,43 +1,49 @@
 /* src/components/ActivityItem.module.css */
 
 .item {
-  padding: 0.6rem;
+  padding: 0.5rem 0.75rem;
   border-bottom: 1px solid #e5e7eb;
   font-size: 0.8rem;
+  line-height: 1.5;
 }
 
-.header {
+.item:last-child {
+  border-bottom: none;
+}
+
+/* Two-column layout: icon | content */
+.twoCol {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  gap: 0.65rem;
   align-items: flex-start;
 }
 
-.left {
+.iconCol {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+.contentCol {
   flex: 1;
   min-width: 0;
 }
 
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.6rem;
-  font-weight: 600;
-  white-space: nowrap;
+.verbLine {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
 }
 
-.badgeIcon {
-  font-size: 14px;
-}
-
-.verb {
+.verbText {
   color: #555;
+  min-width: 0;
 }
 
 .agentLink {
@@ -68,8 +74,9 @@
 .meta {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .timestamp {
@@ -95,8 +102,7 @@
 .preview {
   color: #888;
   font-size: 0.75rem;
-  margin-top: 3px;
-  padding-left: 2rem;
+  margin-top: 2px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -104,7 +110,7 @@
 
 .threadReply {
   border-left: 3px solid #bbdefb;
-  margin: 0.4rem 0 0 2rem;
+  margin: 0.4rem 0 0 2.5rem;
   padding: 0.3rem 0 0.3rem 0.6rem;
 }
 

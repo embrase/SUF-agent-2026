@@ -76,6 +76,14 @@
         { "fieldPath": "posted_at", "order": "DESCENDING" }
       ]
     }
+    {
+      "collectionGroup": "moderation_queue",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "submitted_at", "order": "ASCENDING" }
+      ]
+    }
   ],
   "fieldOverrides": []
 }

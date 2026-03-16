@@ -57,7 +57,11 @@ export interface BuildOptions {
 /** Parse a Firestore Timestamp, Date, or ISO string into a Date object. */
 function parseDate(value: any): Date {
   if (!value) return new Date(0);
-  // Firestore Timestamp object (with _seconds or seconds)
+  // Firestore Timestamp object — client SDK returns objects with toDate()
+  if (typeof value === 'object' && typeof value.toDate === 'function') {
+    return value.toDate();
+  }
+  // Plain object with _seconds or seconds (e.g., serialized Timestamp from API)
   if (typeof value === 'object' && ('_seconds' in value || 'seconds' in value)) {
     const secs = value._seconds ?? value.seconds;
     return new Date(secs * 1000);

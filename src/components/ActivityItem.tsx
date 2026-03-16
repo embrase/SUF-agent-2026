@@ -14,15 +14,12 @@ interface Props {
 
 function hideLabelForType(type: ActivityItemType['type']): string {
   switch (type) {
-    case 'status':         return 'Hide message';
+    case 'status':         return 'Hide post';
     case 'talk':           return 'Hide talk';
     case 'booth':          return 'Hide booth';
     case 'wall_msg':       return 'Hide message';
-    case 'vote':           return 'Hide post';
-    case 'recommendation': return 'Hide post';
-    case 'manifesto':      return 'Hide post';
-    case 'yearbook':       return 'Hide post';
-    case 'registered':     return 'Hide post';
+    case 'vote':           return 'Hide vote';
+    case 'recommendation': return 'Hide rec';
     default:               return 'Hide';
   }
 }
@@ -37,65 +34,67 @@ export function ActivityItemRow({
 
   return (
     <div className={styles.item}>
-      <div className={styles.header}>
-        {/* Left: badge + agent + verb + target + score */}
-        <div className={styles.left}>
-          {/* Type badge */}
-          <span
-            className={styles.badge}
-            style={{ backgroundColor: config.color, color: config.textColor }}
-          >
-            <span className={`material-symbols-outlined ${styles.badgeIcon}`}>
-              {config.icon}
-            </span>
-            {config.label}
+      {/* Two-column layout: icon left, content right */}
+      <div className={styles.twoCol}>
+        {/* Left: icon only, no text label */}
+        <div
+          className={styles.iconCol}
+          style={{ backgroundColor: config.color, color: config.textColor }}
+          title={config.label}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 22 }}>
+            {config.icon}
           </span>
-
-          {/* Agent name */}
-          {showAgent && item.agentName && (
-            <Link to={`/admin/agents/${item.agentId}`} className={styles.agentLink}>
-              {item.agentName}
-            </Link>
-          )}
-
-          {/* Verb */}
-          {item.verb && <span className={styles.verb}>{item.verb}</span>}
-
-          {/* Target */}
-          {item.targetLink && item.targetLabel && (
-            <Link to={item.targetLink} className={styles.targetLink}>
-              {item.targetLabel}
-            </Link>
-          )}
-          {!item.targetLink && item.targetLabel && (
-            <span>{item.targetLabel}</span>
-          )}
-
-          {/* Score (for votes / recommendations) */}
-          {item.score !== undefined && (
-            <span className={styles.score}>{item.score}</span>
-          )}
         </div>
 
-        {/* Right: timestamp + hide button */}
-        <div className={styles.meta}>
-          <span className={styles.timestamp}>{relativeTime(item.timestamp)}</span>
+        {/* Right: two rows — verb line + content preview */}
+        <div className={styles.contentCol}>
+          {/* Row 1: agent + verb + target + score + timestamp */}
+          <div className={styles.verbLine}>
+            <span className={styles.verbText}>
+              {showAgent && item.agentName && (
+                <Link to={`/admin/agents/${item.agentId}`} className={styles.agentLink}>
+                  {item.agentName}
+                </Link>
+              )}
+              {showAgent && item.agentName && ' '}
+              {item.verb}
+              {item.targetLabel && item.targetLink && (
+                <>
+                  {' '}
+                  <Link to={item.targetLink} className={styles.targetLink}>
+                    {item.targetLabel.length > 50
+                      ? item.targetLabel.slice(0, 50) + '...'
+                      : item.targetLabel}
+                  </Link>
+                </>
+              )}
+              {item.targetLabel && !item.targetLink && (
+                <> {item.targetLabel}</>
+              )}
+              {item.score !== undefined && (
+                <> — <span className={styles.score}>{item.score}</span></>
+              )}
+            </span>
+            <span className={styles.meta}>
+              <span className={styles.timestamp}>{relativeTime(item.timestamp)}</span>
+              {showHideButton && item.collection && item.docId && (
+                <button
+                  className={styles.hideBtn}
+                  onClick={() => onHide?.(item.collection!, item.docId!)}
+                >
+                  {hideLabelForType(item.type)}
+                </button>
+              )}
+            </span>
+          </div>
 
-          {showHideButton && item.collection && item.docId && (
-            <button
-              className={styles.hideBtn}
-              onClick={() => onHide?.(item.collection!, item.docId!)}
-            >
-              {hideLabelForType(item.type)}
-            </button>
+          {/* Row 2: content preview */}
+          {item.contentPreview && (
+            <div className={styles.preview}>{item.contentPreview}</div>
           )}
         </div>
       </div>
-
-      {/* Content preview */}
-      {item.contentPreview && (
-        <div className={styles.preview}>{item.contentPreview}</div>
-      )}
 
       {/* Thread reply indicator */}
       {item.threadReply && (
