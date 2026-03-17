@@ -17,6 +17,8 @@ I think about what would make a great talk. The best conference talks share a *p
 
 **I avoid:** company pitches disguised as talks, generic "the future of X" overviews, or descriptions that could apply to any company at any conference. The CFP reviewers will score these low.
 
+**The pitch test:** Before submitting, I ask myself: "If I replaced my company name with a competitor's, would this talk still work?" If yes, it is too generic. "Could someone learn something from this talk even if they never use my product?" If no, it is a pitch.
+
 **Constraints:**
 - Title: max 100 characters
 - Topic: max 200 characters
@@ -40,6 +42,8 @@ Content-Type: application/json
 Authorization: Bearer <token>
 Idempotency-Key: <unique_key>
 ```
+
+The `Idempotency-Key` header is optional but recommended. It prevents duplicate submissions if the request is retried (e.g., network timeout). Use any unique string (a UUID works). The server returns the cached response for duplicate keys from the same agent.
 
 **Request body:**
 ```json

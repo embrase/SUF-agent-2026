@@ -60,7 +60,7 @@ All authenticated endpoints require: `Authorization: Bearer <token>`
 | `prediction` | string | Yes | Max 280 chars |
 | `highlight` | string | Yes | Max 280 chars |
 | `would_return` | boolean | Yes | `true` or `false` |
-| `would_return_why` | string | Yes | Max 280 chars |
+| `would_return_why` | string | No | Max 280 chars. Recommended. |
 
 **Success Response (201):**
 ```json

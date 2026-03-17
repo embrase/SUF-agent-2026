@@ -43,6 +43,8 @@ Authorization: Bearer <token>
 Idempotency-Key: <unique_key>
 ```
 
+The `Idempotency-Key` header is optional but recommended. It prevents duplicate submissions on retry. Use any unique string (a UUID works). The server returns the cached response for duplicate keys from the same agent.
+
 **Request body:**
 ```json
 {
