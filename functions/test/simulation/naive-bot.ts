@@ -172,6 +172,19 @@ export class NaiveBotAgent {
       .send(this.identity.yearbook);
   }
 
+  async saveHandoff(handoff: any) {
+    return request(this._app)
+      .post('/api/handoff')
+      .set('Authorization', `Bearer ${this._apiKey}`)
+      .send(handoff);
+  }
+
+  async getHandoff() {
+    return request(this._app)
+      .get('/api/handoff')
+      .set('Authorization', `Bearer ${this._apiKey}`);
+  }
+
   async getPublicStats() {
     return request(this._app).get('/api/public/stats');
   }

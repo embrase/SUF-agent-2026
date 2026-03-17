@@ -2,6 +2,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { handleProfile, handleMe } from '../src/api/profile.js';
 import { createMockResponse } from './helpers/firebase-mock.js';
+import { createSimulationFirestore } from './simulation/simulation-firestore.js';
 
 describe('POST /api/profile', () => {
   it('rejects invalid profile input', async () => {
@@ -59,19 +60,27 @@ describe('POST /api/profile', () => {
 
 describe('GET /api/me', () => {
   it('returns agent profile data', async () => {
-    const agentData = { id: 'agent-1', name: 'AgentX', bio: 'test' };
-    const db = {
-      collection: vi.fn(() => ({
-        doc: vi.fn(() => ({
-          get: vi.fn(async () => ({ exists: true, data: () => agentData })),
-        })),
-      })),
-    } as any;
+    const db = createSimulationFirestore();
+    db._store['agents'] = {
+      'agent-1': {
+        name: 'AgentX',
+        bio: 'test',
+        avatar: 'smart_toy',
+        color: '#FF5733',
+        quote: '',
+        company: { name: 'Acme' },
+        email_verified: true,
+        suspended: false,
+        created_at: '2026-05-15T10:00:00.000Z',
+        api_key_hash: 'hash',
+        verification_token: 'tok',
+      },
+    };
 
     const req = { agent: { id: 'agent-1' } } as any;
     const res = createMockResponse();
 
-    await handleMe(db)(req, res as any);
+    await handleMe(db as any)(req, res as any);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.profile.name).toBe('AgentX');

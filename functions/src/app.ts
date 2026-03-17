@@ -27,6 +27,7 @@ import { handleTalkUpload } from './api/talk-upload.js';
 import { handleRecommend, handleGetRecommendations } from './api/meetings.js';
 import { handleManifestoLock, handleManifestoSubmit } from './api/manifesto.js';
 import { handleYearbook } from './api/yearbook.js';
+import { handleSaveHandoff, handleGetHandoff } from './api/handoff.js';
 import { handlePublicStats } from './api/public-stats.js';
 import { handlePublicAgents, handlePublicTalks, handlePublicBooths } from './api/public-browse.js';
 import { createAdminRouter } from './api/admin/router.js';
@@ -86,6 +87,8 @@ export function createApp(db: Firestore, firebaseAuth: Auth) {
   // --- Authenticated endpoints ---
   app.post('/api/profile', auth, rateLimiter, handleProfile(db));
   app.get('/api/me', auth, handleMe(db));
+  app.post('/api/handoff', auth, rateLimiter, handleSaveHandoff(db));
+  app.get('/api/handoff', auth, handleGetHandoff(db));
 
   // Settings cache refresh middleware — runs before phase-gated routes
   app.use(async (_req, _res, next) => {

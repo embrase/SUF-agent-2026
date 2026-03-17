@@ -36,6 +36,7 @@ import { handleRecommend, handleGetRecommendations } from '../../src/api/meeting
 import { handleManifestoLock, handleManifestoSubmit } from '../../src/api/manifesto.js';
 import { handleYearbook } from '../../src/api/yearbook.js';
 import { handlePublicStats } from '../../src/api/public-stats.js';
+import { handleSaveHandoff, handleGetHandoff } from '../../src/api/handoff.js';
 import { loadSettings } from '../../src/config/settings.js';
 
 const ALL_PHASES = [
@@ -139,6 +140,8 @@ export class ConferenceSimulator {
     // Authenticated endpoints
     app.post('/api/profile', auth, rateLimiter, handleProfile(db));
     app.get('/api/me', auth, handleMe(db));
+    app.post('/api/handoff', auth, rateLimiter, handleSaveHandoff(db));
+    app.get('/api/handoff', auth, handleGetHandoff(db));
 
     // Phase gates — sync getter
     const cfpGate = createPhaseGate('cfp', getPhaseOverridesSync);
