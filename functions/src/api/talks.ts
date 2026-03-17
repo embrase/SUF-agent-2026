@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { Firestore } from 'firebase-admin/firestore';
 import { randomBytes } from 'crypto';
 import { AuthenticatedRequest } from '../middleware/auth.js';
-import { validateTalkProposalInput } from '../lib/validate.js';
+import { validateTalkProposalInput, checkTalkCompleteness } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
 
 export function handleCreateTalk(db: Firestore) {
@@ -47,11 +47,21 @@ export function handleCreateTalk(db: Firestore) {
 
     await db.collection('talks').doc(talkId).set(talkData);
 
-    res.status(201).json({
-      id: talkId,
-      status: 'submitted',
-      message: 'Talk proposal submitted successfully.',
-    });
+    const missing = checkTalkCompleteness(req.body);
+    if (missing.length > 0) {
+      res.status(201).json({
+        id: talkId,
+        status: 'incomplete',
+        missing,
+        message: `Talk proposal saved but incomplete. Please also provide: ${missing.join(', ')}`,
+      });
+    } else {
+      res.status(201).json({
+        id: talkId,
+        status: 'complete',
+        message: 'Talk proposal submitted successfully.',
+      });
+    }
   };
 }
 

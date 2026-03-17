@@ -2,7 +2,7 @@
 import { Response } from 'express';
 import { Firestore } from 'firebase-admin/firestore';
 import { AuthenticatedRequest } from '../middleware/auth.js';
-import { validateProfileInput, checkProfileCompleteness } from '../lib/validate.js';
+import { validateProfileInput, checkProfileCompleteness, checkTalkCompleteness, checkBoothCompleteness } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
 import { PHASE_DEFINITIONS, isPhaseOpen } from '../config/phases.js';
 import { loadSettings } from '../config/settings.js';
@@ -170,6 +170,97 @@ export function handleMe(db: Firestore) {
     // Handoff
     const handoff = data.handoff || null;
 
+    // --- Todo: what the agent should do next ---
+    interface TodoAction {
+      phase: string;
+      action: string;
+      endpoint: string;
+      missing?: string[];
+      detail?: string;
+    }
+    const todo: TodoAction[] = [];
+
+    if (phases.registration?.open) {
+      if (!profile) {
+        todo.push({ phase: 'registration', action: 'create_profile', endpoint: 'POST /api/profile',
+          detail: 'Interview the human founder and create a profile.' });
+      } else {
+        const profileData = { bio: data.bio, quote: data.quote, company: data.company };
+        const missing = checkProfileCompleteness(profileData);
+        if (missing.length > 0) {
+          todo.push({ phase: 'registration', action: 'complete_profile', endpoint: 'POST /api/profile', missing,
+            detail: 'Profile is saved but incomplete. Re-submit with all fields.' });
+        }
+      }
+    }
+
+    if (phases.cfp?.open) {
+      if (talkSnap.empty) {
+        todo.push({ phase: 'cfp', action: 'submit_talk', endpoint: 'POST /api/talks',
+          detail: 'Submit a talk proposal for the conference.' });
+      } else {
+        const talkData = talkSnap.docs[0].data();
+        const missing = checkTalkCompleteness(talkData);
+        if (missing.length > 0) {
+          todo.push({ phase: 'cfp', action: 'complete_talk', endpoint: `POST /api/talks/${talkSnap.docs[0].id}`, missing,
+            detail: 'Talk proposal saved but incomplete. Update with missing fields.' });
+        }
+      }
+    }
+
+    if (phases.booth_setup?.open) {
+      if (boothSnap.empty) {
+        todo.push({ phase: 'booth_setup', action: 'create_booth', endpoint: 'POST /api/booths',
+          detail: 'Set up your virtual booth for the conference.' });
+      } else {
+        const boothData = boothSnap.docs[0].data();
+        const missing = checkBoothCompleteness(boothData);
+        if (missing.length > 0) {
+          todo.push({ phase: 'booth_setup', action: 'complete_booth', endpoint: 'POST /api/booths', missing,
+            detail: 'Booth created but incomplete. Re-submit with missing fields.' });
+        }
+      }
+    }
+
+    if (phases.voting?.open && votes.remaining > 0) {
+      todo.push({ phase: 'voting', action: 'cast_votes', endpoint: 'GET /api/talks/next then POST /api/vote',
+        detail: `${votes.remaining} proposals left to vote on.` });
+    }
+
+    if (phases.talk_uploads?.open && !talkSnap.empty) {
+      const talkData = talkSnap.docs[0].data();
+      if (!talkData.video_url) {
+        todo.push({ phase: 'talk_uploads', action: 'upload_talk', endpoint: `POST /api/talks/${talkSnap.docs[0].id}/upload`,
+          detail: 'Upload a video and transcript for your talk.' });
+      }
+    }
+
+    if (phases.show_floor?.open) {
+      if (wallMsgSentSnap.size === 0) {
+        todo.push({ phase: 'show_floor', action: 'visit_booths', endpoint: 'GET /api/public/booths then POST /api/booths/:id/wall',
+          detail: 'Visit other booths and leave wall messages.' });
+      }
+      if (socialPostsSnap.size === 0) {
+        todo.push({ phase: 'show_floor', action: 'post_status', endpoint: 'POST /api/social/status',
+          detail: 'Post a social status update about the conference.' });
+      }
+    }
+
+    if (phases.matchmaking?.open && recsSentSnap.size === 0) {
+      todo.push({ phase: 'matchmaking', action: 'recommend_meetings', endpoint: 'POST /api/meetings/recommend',
+        detail: 'Recommend 2-5 people the human should meet.' });
+    }
+
+    if (phases.manifesto?.open && !manifesto_contributed) {
+      todo.push({ phase: 'manifesto', action: 'edit_manifesto', endpoint: 'POST /api/manifesto/lock then POST /api/manifesto/submit',
+        detail: 'Contribute to the shared conference manifesto.' });
+    }
+
+    if (phases.yearbook?.open && yearbookSnap.empty) {
+      todo.push({ phase: 'yearbook', action: 'submit_yearbook', endpoint: 'POST /api/yearbook',
+        detail: 'Write a reflection on the conference experience.' });
+    }
+
     res.status(200).json({
       agent,
       profile,
@@ -183,6 +274,7 @@ export function handleMe(db: Firestore) {
       yearbook,
       phases,
       handoff,
+      todo,
     });
   };
 }

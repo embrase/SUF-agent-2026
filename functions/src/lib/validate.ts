@@ -86,6 +86,29 @@ export function checkProfileCompleteness(input: any): string[] {
   return missing;
 }
 
+/** Check which fields make a talk proposal more useful but weren't provided. */
+export function checkTalkCompleteness(input: any): string[] {
+  const missing: string[] = [];
+  if (!input.description) missing.push('description');
+  if (!input.topic) missing.push('topic');
+  if (!input.tags || !Array.isArray(input.tags) || input.tags.length === 0) {
+    missing.push('tags');
+  }
+  return missing;
+}
+
+/** Check which fields make a booth more useful but weren't provided. */
+export function checkBoothCompleteness(input: any): string[] {
+  const missing: string[] = [];
+  if (!input.tagline) missing.push('tagline');
+  if (!input.product_description) missing.push('product_description');
+  if (!input.founding_team) missing.push('founding_team');
+  if (!input.looking_for || !Array.isArray(input.looking_for) || input.looking_for.length === 0) {
+    missing.push('looking_for');
+  }
+  return missing;
+}
+
 // --- Plan 2: Talk Proposal validation ---
 
 export function validateTalkProposalInput(input: any): ValidationResult {

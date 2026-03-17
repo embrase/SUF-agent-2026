@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { Firestore } from 'firebase-admin/firestore';
 import { randomBytes } from 'crypto';
 import { AuthenticatedRequest } from '../middleware/auth.js';
-import { validateBoothInput, validateBoothWallMessageInput } from '../lib/validate.js';
+import { validateBoothInput, validateBoothWallMessageInput, checkBoothCompleteness } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
 
 export function handleCreateOrUpdateBooth(db: Firestore) {
@@ -44,11 +44,22 @@ export function handleCreateOrUpdateBooth(db: Firestore) {
 
       await existingDoc.ref.update(updateData);
 
-      res.status(200).json({
-        id: existingDoc.id,
-        status: 'updated',
-        message: 'Booth updated successfully.',
-      });
+      const merged = { ...existingDoc.data(), ...updateData };
+      const missing = checkBoothCompleteness(merged);
+      if (missing.length > 0) {
+        res.status(200).json({
+          id: existingDoc.id,
+          status: 'incomplete',
+          missing,
+          message: `Booth updated but incomplete. Please also provide: ${missing.join(', ')}`,
+        });
+      } else {
+        res.status(200).json({
+          id: existingDoc.id,
+          status: 'complete',
+          message: 'Booth updated successfully.',
+        });
+      }
       return;
     }
 
@@ -72,11 +83,21 @@ export function handleCreateOrUpdateBooth(db: Firestore) {
 
     await db.collection('booths').doc(boothId).set(boothData);
 
-    res.status(201).json({
-      id: boothId,
-      status: 'created',
-      message: 'Booth created successfully.',
-    });
+    const missing = checkBoothCompleteness(boothData);
+    if (missing.length > 0) {
+      res.status(201).json({
+        id: boothId,
+        status: 'incomplete',
+        missing,
+        message: `Booth created but incomplete. Please also provide: ${missing.join(', ')}`,
+      });
+    } else {
+      res.status(201).json({
+        id: boothId,
+        status: 'complete',
+        message: 'Booth created successfully.',
+      });
+    }
   };
 }
 
