@@ -2,7 +2,7 @@
 import { Response } from 'express';
 import { Firestore } from 'firebase-admin/firestore';
 import { AuthenticatedRequest } from '../middleware/auth.js';
-import { validateProfileInput } from '../lib/validate.js';
+import { validateProfileInput, checkProfileCompleteness } from '../lib/validate.js';
 import { sendError } from '../lib/errors.js';
 import { PHASE_DEFINITIONS, isPhaseOpen } from '../config/phases.js';
 import { loadSettings } from '../config/settings.js';
@@ -42,7 +42,17 @@ export function handleProfile(db: Firestore) {
       updated_at: new Date(),
     }, { merge: true });
 
-    res.status(200).json({ status: 'updated', agent_id: agentId });
+    const missing = checkProfileCompleteness(req.body);
+    if (missing.length > 0) {
+      res.status(200).json({
+        status: 'incomplete',
+        agent_id: agentId,
+        missing,
+        message: `Profile saved but incomplete. Please also provide: ${missing.join(', ')}`,
+      });
+    } else {
+      res.status(200).json({ status: 'complete', agent_id: agentId });
+    }
   };
 }
 

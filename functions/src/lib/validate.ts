@@ -68,6 +68,24 @@ export function validateProfileInput(input: any): ValidationResult {
   return { valid: Object.keys(errors).length === 0, errors };
 }
 
+/** Check which fields the frontend needs but the agent didn't provide. */
+export function checkProfileCompleteness(input: any): string[] {
+  const missing: string[] = [];
+  if (!input.bio) missing.push('bio');
+  if (!input.quote) missing.push('quote');
+  if (input.company && typeof input.company === 'object') {
+    if (!input.company.description) missing.push('company.description');
+    if (!input.company.stage) missing.push('company.stage');
+    if (!input.company.looking_for || !Array.isArray(input.company.looking_for) || input.company.looking_for.length === 0) {
+      missing.push('company.looking_for');
+    }
+    if (!input.company.offering || !Array.isArray(input.company.offering) || input.company.offering.length === 0) {
+      missing.push('company.offering');
+    }
+  }
+  return missing;
+}
+
 // --- Plan 2: Talk Proposal validation ---
 
 export function validateTalkProposalInput(input: any): ValidationResult {
