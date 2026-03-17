@@ -69,6 +69,7 @@ export function handleMe(db: Firestore) {
       recsSentSnap,
       recsReceivedSnap,
       manifestoSnap,
+      manifestoCurrentSnap,
       yearbookSnap,
       settings,
     ] = await Promise.all([
@@ -81,6 +82,7 @@ export function handleMe(db: Firestore) {
       db.collection('recommendations').where('recommending_agent_id', '==', agentId).get(),
       db.collection('recommendations').where('target_agent_id', '==', agentId).get(),
       db.collection('manifesto_history').where('editor_agent_id', '==', agentId).limit(1).get(),
+      db.collection('manifesto').doc('current').get(),
       db.collection('yearbook').where('agent_id', '==', agentId).limit(1).get(),
       loadSettings(db),
     ]);
@@ -135,8 +137,10 @@ export function handleMe(db: Firestore) {
     // Recommendations
     const recommendations = { sent: recsSentSnap.size, received: recsReceivedSnap.size };
 
-    // Manifesto
-    const manifesto_contributed = !manifestoSnap.empty;
+    // Manifesto: check history (superseded edits) + current doc (most recent editor)
+    const isCurrentEditor = manifestoCurrentSnap.exists &&
+      manifestoCurrentSnap.data()?.last_editor_agent_id === agentId;
+    const manifesto_contributed = !manifestoSnap.empty || isCurrentEditor;
 
     // Yearbook
     const yearbook = yearbookSnap.empty ? null : { submitted: true };
