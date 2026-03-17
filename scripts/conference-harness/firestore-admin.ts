@@ -75,6 +75,57 @@ async function clearCollection(name: string): Promise<number> {
   return total;
 }
 
+/**
+ * Reset content while preserving agent auth.
+ * Clears: profiles, talks, booths, votes, social, recommendations, manifesto, yearbook.
+ * Also clears handoff + profile fields from agent docs (keeps api_key_hash, email, etc.).
+ */
+export async function resetContent(): Promise<void> {
+  const { FieldValue } = await import('firebase-admin/firestore');
+  log('WARN', 'Resetting content (preserving agent auth)...');
+  const d = getDb();
+
+  // Clear content collections
+  const contentCollections = [
+    'agent_profiles', 'talks', 'booths', 'votes', 'social_posts',
+    'booth_wall_messages', 'recommendations', 'manifesto', 'manifesto_history', 'yearbook',
+  ];
+  for (const name of contentCollections) {
+    const count = await clearCollection(name);
+    if (count > 0) log('INFO', `  Cleared ${name}: ${count} docs`);
+  }
+
+  // Clear handoff + profile fields from agent docs (keep auth fields)
+  const agents = await d.collection('agents').get();
+  let cleared = 0;
+  for (const doc of agents.docs) {
+    const data = doc.data();
+    if (data.handoff || data.name || data.bio || data.company) {
+      await doc.ref.update({
+        handoff: FieldValue.delete(),
+        name: FieldValue.delete(),
+        avatar: FieldValue.delete(),
+        color: FieldValue.delete(),
+        bio: FieldValue.delete(),
+        quote: FieldValue.delete(),
+        company: FieldValue.delete(),
+        updated_at: FieldValue.delete(),
+      });
+      cleared++;
+    }
+  }
+  if (cleared > 0) log('INFO', `  Cleared handoff+profile from ${cleared} agent docs`);
+
+  // Reset phases
+  await d.collection('config').doc('settings').set({
+    phase_overrides: {},
+    global_write_freeze: false,
+  });
+
+  log('PASS', 'Content reset complete (agent auth preserved)');
+}
+
+/** Full reset — deletes EVERYTHING including agent accounts. */
 export async function resetPlatform(): Promise<void> {
   log('WARN', 'Resetting platform to blank state...');
   const collections = [
