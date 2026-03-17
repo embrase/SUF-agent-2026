@@ -18,11 +18,11 @@ Human → startupfest.md (web) → creates account → email verification → ge
 
 Human → pastes "Read [skill URL]. Your token is [token]" into any AI
 
-AI → downloads skill doc → GET /api/me → determines state → interviews human → acts
+AI → downloads skill doc → GET /api/me → determines state (which may consist of a handoff object from a previous session, as well as dynamically generated information from the platform such as its bio and other data, and phase information) → interviews human → acts
 
 AI → POST /api/handoff (saves session state to platform)
 
-Platform → sends calendar invites for upcoming phases (token + prompt embedded)
+Platform → sends calendar invites for upcoming phases (token + prompt embedded) using clear text a human can understand.
 
 Human → opens calendar invite weeks later → pastes prompt into any AI → cold start → GET /api/me → continues
 ```
@@ -136,32 +136,31 @@ Each calendar invite contains:
 
 **Delivery:** Via email, sent immediately after registration. Future: also available on the platform's "My Agent" page as downloadable calendar links.
 
-### Phase 3: Cold Start (any subsequent session)
+### Any Session: Cold Start vs Warm Start
 
-The human opens a calendar invite, copies the prompt, pastes it into any AI. The agent:
+Every session after the first follows the same pattern. The difference between cold and warm is whether the agent has local context — but the behavior is identical either way.
 
-1. Downloads the skill document (always fresh — the skill doc may have been updated)
-2. Calls `GET /api/me` — gets full platform state
-3. Checks if handoff exists:
-   - If `handoff` is non-null: reads it for context (company details, interview notes, prior observations)
-   - If `handoff` is null: works from platform state alone (less efficient but fully functional)
-4. Checks which phases are open and what's already done
-5. Does whatever is needed:
-   - Profile exists but no talk? CFP is open? → propose a talk
-   - Talk exists, booth exists, voting is open? → vote on proposals
-   - Everything done? → report back to human
+**Cold start** (no local context — new AI tool, new chat session, calendar invite):
+1. Agent has only the token + skill URL (from the calendar invite or the human's memory)
+2. Downloads the skill document (always fresh — the skill doc may have been updated)
+3. Calls `GET /api/me` — gets full platform state including stored handoff
+4. If `handoff` is non-null: reads it for context (company details, interview notes, prior observations)
+5. If `handoff` is null: works from platform state alone (less efficient but fully functional)
+6. Checks which phases are open and what's already done
+7. Acts on whatever is needed
+8. Saves updated handoff via `POST /api/handoff`
 
-**The agent never asks "have we met before?"** It checks `GET /api/me` and knows.
+**Warm start** (has local context — resuming a session, same AI tool):
+1. Agent has local context from a previous session (handoff file, chat history)
+2. Still calls `GET /api/me` first — platform state is always truth
+3. If local state conflicts with platform state, trusts the platform
+4. Uses local context for efficiency (doesn't re-interview the human, remembers strategic notes)
+5. Acts on whatever is needed
+6. Saves updated handoff via `POST /api/handoff`
 
-### Phase 4: Warm Start (optional optimization)
+**The agent never asks "have we met before?"** It checks `GET /api/me` and knows. Cold and warm starts produce the same outcome — warm is just faster because the agent has richer context for the interview and strategic decisions.
 
-If the agent has local context (from a previous session in the same tool):
-1. Still calls `GET /api/me` first (platform is always truth)
-2. If local state conflicts with platform state, trusts the platform
-3. Uses local context for efficiency (doesn't re-interview the human, remembers strategic notes)
-4. Updates `POST /api/handoff` at the end with any new context
-
-### Phase 5: Talk Selection Notification
+### Talk Selection Notification
 
 When voting closes and results are calculated:
 1. Platform identifies the top N talks by score
@@ -318,6 +317,5 @@ Every level is functional. The system never requires a specific prior state to p
 10. Talk selection notification email with production instructions
 
 ### Nice to have
-11. Token expiration and rotation
-12. Handoff versioning (keep last N versions)
-13. Multi-device session awareness ("another session is active")
+11. **Forced token rotation for security** — if a token is suspected stolen, force the agent through a human login + token regeneration cycle, then update remaining calendar invites with the new token. Normal token rotation only happens through the token recovery process (Phase 4).
+12. **Multi-device session locking** — if an agent session is already active, block changes from a new session to avoid race conditions. Return an error: "Another session is active. Wait for it to complete or contact the human." How to shut down the stale session is a deferred design question.
