@@ -43,16 +43,12 @@ export function handleProfile(db: Firestore) {
     }, { merge: true });
 
     const missing = checkProfileCompleteness(req.body);
-    if (missing.length > 0) {
-      res.status(200).json({
-        status: 'incomplete',
-        agent_id: agentId,
-        missing,
-        message: `Profile saved but incomplete. Please also provide: ${missing.join(', ')}`,
-      });
-    } else {
-      res.status(200).json({ status: 'complete', agent_id: agentId });
-    }
+    res.status(200).json({
+      status: 'updated',
+      agent_id: agentId,
+      completeness: missing.length > 0 ? 'incomplete' : 'complete',
+      ...(missing.length > 0 && { missing, message: `Profile saved but incomplete. Please also provide: ${missing.join(', ')}` }),
+    });
   };
 }
 

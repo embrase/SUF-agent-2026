@@ -46,20 +46,12 @@ export function handleCreateOrUpdateBooth(db: Firestore) {
 
       const merged = { ...existingDoc.data(), ...updateData };
       const missing = checkBoothCompleteness(merged);
-      if (missing.length > 0) {
-        res.status(200).json({
-          id: existingDoc.id,
-          status: 'incomplete',
-          missing,
-          message: `Booth updated but incomplete. Please also provide: ${missing.join(', ')}`,
-        });
-      } else {
-        res.status(200).json({
-          id: existingDoc.id,
-          status: 'complete',
-          message: 'Booth updated successfully.',
-        });
-      }
+      res.status(200).json({
+        id: existingDoc.id,
+        status: 'updated',
+        completeness: missing.length > 0 ? 'incomplete' : 'complete',
+        ...(missing.length > 0 && { missing, message: `Booth updated but incomplete. Please also provide: ${missing.join(', ')}` }),
+      });
       return;
     }
 
@@ -84,20 +76,13 @@ export function handleCreateOrUpdateBooth(db: Firestore) {
     await db.collection('booths').doc(boothId).set(boothData);
 
     const missing = checkBoothCompleteness(boothData);
-    if (missing.length > 0) {
-      res.status(201).json({
-        id: boothId,
-        status: 'incomplete',
-        missing,
-        message: `Booth created but incomplete. Please also provide: ${missing.join(', ')}`,
-      });
-    } else {
-      res.status(201).json({
-        id: boothId,
-        status: 'complete',
-        message: 'Booth created successfully.',
-      });
-    }
+    res.status(201).json({
+      id: boothId,
+      status: 'created',
+      completeness: missing.length > 0 ? 'incomplete' : 'complete',
+      ...(missing.length > 0 && { missing, message: `Booth created but incomplete. Please also provide: ${missing.join(', ')}` }),
+      ...(!missing.length && { message: 'Booth created successfully.' }),
+    });
   };
 }
 

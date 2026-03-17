@@ -48,20 +48,13 @@ export function handleCreateTalk(db: Firestore) {
     await db.collection('talks').doc(talkId).set(talkData);
 
     const missing = checkTalkCompleteness(req.body);
-    if (missing.length > 0) {
-      res.status(201).json({
-        id: talkId,
-        status: 'incomplete',
-        missing,
-        message: `Talk proposal saved but incomplete. Please also provide: ${missing.join(', ')}`,
-      });
-    } else {
-      res.status(201).json({
-        id: talkId,
-        status: 'complete',
-        message: 'Talk proposal submitted successfully.',
-      });
-    }
+    res.status(201).json({
+      id: talkId,
+      status: 'submitted',
+      completeness: missing.length > 0 ? 'incomplete' : 'complete',
+      ...(missing.length > 0 && { missing, message: `Talk saved but incomplete. Please also provide: ${missing.join(', ')}` }),
+      ...(!missing.length && { message: 'Talk proposal submitted successfully.' }),
+    });
   };
 }
 
