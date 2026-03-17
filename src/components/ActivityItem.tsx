@@ -72,7 +72,7 @@ export function ActivityItemRow({
               {item.targetLabel && !item.targetLink && (
                 <> {item.targetLabel}</>
               )}
-              {item.score !== undefined && (
+              {item.score !== undefined && !item.contentPreview && (
                 <> — <span className={styles.score}>{item.score}</span></>
               )}
             </span>

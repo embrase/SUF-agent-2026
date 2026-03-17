@@ -179,7 +179,7 @@ export function buildActivityFeed(options: BuildOptions): ActivityItem[] {
   for (const p of socialPosts) {
     const authorId: string = p.author_agent_id;
     if (!authorId) continue;
-    const timestamp = parseDate(p.created_at ?? p.timestamp);
+    const timestamp = parseDate(p.posted_at ?? p.created_at ?? p.timestamp);
     const type = p.type as string;
 
     if (type === 'wall_post') {
@@ -221,7 +221,7 @@ export function buildActivityFeed(options: BuildOptions): ActivityItem[] {
     if (!authorId) continue;
     const booth = boothMap.get(w.booth_id);
     const boothLabel = booth?.company_name ?? w.booth_id;
-    const timestamp = parseDate(w.created_at ?? w.timestamp);
+    const timestamp = parseDate(w.posted_at ?? w.created_at ?? w.timestamp);
     const item: ActivityItem = {
       id: `wall-${w.id ?? timestamp.getTime()}`,
       type: 'wall_msg',
