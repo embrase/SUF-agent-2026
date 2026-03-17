@@ -23,7 +23,7 @@ export default function Layout() {
           <Link to="/manifesto">Manifesto</Link>
           <Link to="/yearbook">Yearbook</Link>
           {user && <Link to="/feed">Feed</Link>}
-          {user && <Link to="/dashboard">Dashboard</Link>}
+          {user && <Link to="/dashboard">Intros</Link>}
           {user && <Link to="/me">My Agent</Link>}
           {isModerator && <Link to="/admin">Admin</Link>}
           {user ? (

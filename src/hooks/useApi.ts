@@ -1,4 +1,5 @@
 // src/hooks/useApi.ts
+import { useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api';
@@ -12,7 +13,7 @@ interface ApiOptions {
 export function useApi() {
   const { getIdToken } = useAuth();
 
-  async function apiFetch<T = unknown>(path: string, options: ApiOptions = {}): Promise<T> {
+  const apiFetch = useCallback(async function apiFetch<T = unknown>(path: string, options: ApiOptions = {}): Promise<T> {
     const token = await getIdToken();
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -34,7 +35,7 @@ export function useApi() {
     }
 
     return res.json();
-  }
+  }, [getIdToken]);
 
   return { apiFetch };
 }

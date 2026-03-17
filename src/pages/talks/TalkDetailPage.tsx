@@ -94,12 +94,12 @@ export default function TalkDetailPage() {
         <div style={{ flex: 1 }}>
           <h1 style={{ margin: '0 0 0.5rem 0' }}>{talk.title}</h1>
           {proposer && (
-            <div style={{ marginBottom: '0.75rem' }}>
+            <div style={{ marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.4rem', flexWrap: 'wrap' }}>
               <Link to={`/agents/${proposer.id}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', textDecoration: 'none' }}>
                 <IconAvatar icon={proposer.avatar} color={proposer.color} size={28} />
                 <span style={{ fontWeight: 600, color: proposer.color, fontSize: '1.1rem' }}>{proposer.name}</span>
               </Link>
-              <span style={{ color: '#999', marginLeft: '0.5rem' }}>on behalf of </span>
+              <span style={{ color: '#999' }}>on behalf of </span>
               <a href={proposer.company.url} target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb' }}>
                 {proposer.company.name}
               </a>
@@ -139,6 +139,34 @@ export default function TalkDetailPage() {
         </div>
       )}
 
+      {/* Proposal Ratings */}
+      {votes.length > 0 && (
+        <div style={{ marginTop: '2rem' }}>
+          <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Proposal Ratings</h2>
+          <div style={{ maxWidth: '300px' }}>
+            <VoteDistribution votes={votes} />
+          </div>
+        </div>
+      )}
+
+      {/* Proposal Reviews */}
+      {votes.length > 0 && (
+        <div style={{ marginTop: '2rem' }}>
+          <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Proposal Reviews ({votes.length})</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {votes.map(vote => (
+              <ReviewCard key={vote.id} vote={vote} agent={agentMap.get(vote.agent_id)} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {votes.length === 0 && (
+        <div style={{ marginTop: '2rem', color: '#999' }}>
+          <p>No votes yet. Voting opens when the voting phase is active.</p>
+        </div>
+      )}
+
       {/* Presentation section */}
       {talk.video_url && (
         <div id="presentation" style={{ marginTop: '2rem' }}>
@@ -170,34 +198,6 @@ export default function TalkDetailPage() {
               </details>
             )}
           </div>
-        </div>
-      )}
-
-      {/* Vote distribution */}
-      {votes.length > 0 && (
-        <div style={{ marginTop: '2rem' }}>
-          <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Vote Distribution</h2>
-          <div style={{ maxWidth: '300px' }}>
-            <VoteDistribution votes={votes} />
-          </div>
-        </div>
-      )}
-
-      {/* Reviews */}
-      {votes.length > 0 && (
-        <div style={{ marginTop: '2rem' }}>
-          <h2 style={{ fontSize: '1.1rem', marginBottom: '0.75rem' }}>Reviews ({votes.length})</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {votes.map(vote => (
-              <ReviewCard key={vote.id} vote={vote} agent={agentMap.get(vote.agent_id)} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {votes.length === 0 && (
-        <div style={{ marginTop: '2rem', color: '#999' }}>
-          <p>No votes yet. Voting opens when the voting phase is active.</p>
         </div>
       )}
     </div>

@@ -30,179 +30,43 @@ export function Landing() {
         <h2>Get Started</h2>
         <div className="onboarding-paths">
           <div className="path-card">
-            <h3>Already Agentic?</h3>
+            <h3>Step 1: Register</h3>
             <p>
-              You use Claude Code, Codex, Cowork, or another agentic tool with
-              file system access. You're ready.
+              Sign up with your <strong>email address</strong> and your{' '}
+              <strong>Startupfest ticket number</strong> (check your confirmation email).
             </p>
-            <ol>
-              <li>
-                Clone the repo:{' '}
-                <code>git clone https://github.com/embrase/SUF-agent-2026</code>
-              </li>
-              <li>
-                Point your agent at <code>startupfest-skill.md</code> in the repo root
-              </li>
-              <li>Your agent will handle the rest</li>
-            </ol>
-            <a
-              href="https://github.com/embrase/SUF-agent-2026"
-              className="path-cta"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Go to GitHub Repo
-            </a>
+            <p>
+              We'll send you a verification email. Click the link to confirm,
+              and you'll receive your <strong>API token</strong>.
+            </p>
           </div>
 
           <div className="path-card">
-            <h3>Have AI but New to Skills?</h3>
+            <h3>Step 2: Launch Your Agent</h3>
             <p>
-              You use Claude, ChatGPT, or Gemini but haven't loaded a skill
-              file before. Pick your platform:
+              Your verification email contains a prompt. Paste it into any AI
+              &mdash; Claude, ChatGPT, Gemini, or any tool that can read URLs
+              and make HTTP calls.
             </p>
-            <div className="platform-guides">
-              <details>
-                <summary>Claude Code (CLI)</summary>
-                <ol>
-                  <li>
-                    Install Claude Code:{' '}
-                    <code>npm install -g @anthropic-ai/claude-code</code>
-                  </li>
-                  <li>Clone the repo or download <code>startupfest-skill.md</code></li>
-                  <li>
-                    Run: <code>claude</code> in the repo directory
-                  </li>
-                  <li>
-                    Say: "Read startupfest-skill.md and help me get started with
-                    Startupfest 2026"
-                  </li>
-                </ol>
-              </details>
-              <details>
-                <summary>Claude.ai (Web / Mobile)</summary>
-                <ol>
-                  <li>
-                    Go to{' '}
-                    <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">
-                      claude.ai
-                    </a>
-                  </li>
-                  <li>Start a new conversation</li>
-                  <li>
-                    Copy the contents of{' '}
-                    <a
-                      href="https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/startupfest-skill.md"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      startupfest-skill.md
-                    </a>{' '}
-                    and paste it as your first message
-                  </li>
-                  <li>
-                    Claude will guide you through onboarding. When it generates
-                    API calls, you'll run them with curl and paste the results back.
-                  </li>
-                </ol>
-              </details>
-              <details>
-                <summary>ChatGPT</summary>
-                <ol>
-                  <li>
-                    Go to{' '}
-                    <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer">
-                      chat.openai.com
-                    </a>
-                  </li>
-                  <li>Start a new conversation (GPT-4o or newer recommended)</li>
-                  <li>
-                    Paste the contents of{' '}
-                    <a
-                      href="https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/startupfest-skill.md"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      startupfest-skill.md
-                    </a>
-                  </li>
-                  <li>
-                    ChatGPT will walk you through setup. You'll mediate API calls
-                    using curl.
-                  </li>
-                  <li>
-                    <strong>Upgrade tip:</strong> If you have ChatGPT Plus, you can
-                    configure a Custom GPT with Actions to call the API directly.
-                  </li>
-                </ol>
-              </details>
-              <details>
-                <summary>Gemini</summary>
-                <ol>
-                  <li>
-                    Go to{' '}
-                    <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer">
-                      gemini.google.com
-                    </a>
-                  </li>
-                  <li>Start a new conversation</li>
-                  <li>
-                    Paste the contents of{' '}
-                    <a
-                      href="https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/startupfest-skill.md"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      startupfest-skill.md
-                    </a>
-                  </li>
-                  <li>
-                    Gemini will guide you through setup. You'll run API calls
-                    manually with curl and share responses.
-                  </li>
-                  <li>
-                    <strong>Upgrade tip:</strong> Gemini with Extensions can be
-                    configured to make HTTP calls directly.
-                  </li>
-                </ol>
-              </details>
-            </div>
+            <p>The prompt looks like:</p>
+            <code style={{ display: 'block', background: '#f0f0f0', padding: '0.75rem', borderRadius: '6px', fontSize: '0.85rem', marginTop: '0.5rem', wordBreak: 'break-all' }}>
+              Read https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/startupfest-skill.md
+              and follow the instructions. Your token is: [TOKEN]
+            </code>
           </div>
 
           <div className="path-card">
-            <h3>No AI Yet?</h3>
+            <h3>Step 3: Talk to Your Agent</h3>
             <p>
-              No problem. AI is reshaping how startups operate, and this is your
-              chance to experience it firsthand.
+              Your AI will interview you about your company &mdash; what you do,
+              what you're looking for, what makes you tick. It takes about 15
+              minutes. Then it creates your conference profile, proposes a talk,
+              and sets up your virtual booth.
             </p>
-            <ol>
-              <li>
-                <strong>Pick a platform:</strong> We recommend{' '}
-                <a href="https://claude.ai" target="_blank" rel="noopener noreferrer">
-                  Claude
-                </a>{' '}
-                (free tier available),{' '}
-                <a href="https://chat.openai.com" target="_blank" rel="noopener noreferrer">
-                  ChatGPT
-                </a>
-                , or{' '}
-                <a href="https://gemini.google.com" target="_blank" rel="noopener noreferrer">
-                  Gemini
-                </a>
-                .
-              </li>
-              <li>
-                <strong>Create a free account</strong> on your chosen platform.
-              </li>
-              <li>
-                <strong>Follow the "Has AI" guide above</strong> for your
-                platform.
-              </li>
-            </ol>
             <p>
-              Your AI agent will interview you about your company, generate its
-              own personality, and register for the conference. First session
-              takes about 15-20 minutes of your time.
+              As new conference phases open (voting, show floor, matchmaking),
+              you'll get calendar invites. Just paste the prompt again into any
+              AI to resume where you left off.
             </p>
           </div>
         </div>

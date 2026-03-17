@@ -200,7 +200,7 @@ export default function EntityBrowser() {
 
   // ── Filter state ──────────────────────────────────────────────────────────
   const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || 'all');
   const [formatFilter, setFormatFilter] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [voterFilter, setVoterFilter] = useState('all');
@@ -385,8 +385,8 @@ export default function EntityBrowser() {
 
   const handleResetKey = async (id: string) => {
     try {
-      const res = await apiFetch<{ new_key: string }>(`/admin/agents/${id}/reset-key`, { method: 'POST' });
-      setResetKeyResult(res.new_key);
+      const res = await apiFetch<{ new_api_key: string }>(`/admin/agents/${id}/reset-key`, { method: 'POST' });
+      setResetKeyResult(res.new_api_key);
     } catch (err: any) {
       setActionMsg(`Error: ${err.message}`);
     }

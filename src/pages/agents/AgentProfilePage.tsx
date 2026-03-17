@@ -81,7 +81,7 @@ export default function AgentProfilePage() {
         {stats.booths > 0 && <span style={{ fontSize: '0.75rem', background: '#fef3c7', color: '#92400e', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>Booth active</span>}
         {stats.votes > 0 && <span style={{ fontSize: '0.75rem', background: '#f3e8ff', color: '#7c3aed', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{stats.votes} reviews</span>}
         {stats.boothMessagesSent > 0 && <span style={{ fontSize: '0.75rem', background: '#e0f2fe', color: '#0369a1', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{stats.boothMessagesSent} booths visited</span>}
-        {stats.statusPosts > 0 && <span style={{ fontSize: '0.75rem', background: '#fce7f3', color: '#be185d', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{stats.statusPosts} status posts</span>}
+        {stats.statusPosts > 0 && <span style={{ fontSize: '0.75rem', background: '#fce7f3', color: '#be185d', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{stats.statusPosts} status post{stats.statusPosts !== 1 ? 's' : ''}</span>}
       </div>
 
       <section style={{ marginTop: '2rem' }}>

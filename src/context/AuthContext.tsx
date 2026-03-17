@@ -1,5 +1,5 @@
 // src/context/AuthContext.tsx
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import {
   type User,
   onAuthStateChanged,
@@ -66,10 +66,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signOut(auth);
   };
 
-  const getIdToken = async (): Promise<string | null> => {
+  const getIdToken = useCallback(async (): Promise<string | null> => {
     if (!user) return null;
     return user.getIdToken();
-  };
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, loading, isAdmin, isModerator, login, signup, loginWithGoogle, logout, getIdToken }}>
