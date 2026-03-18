@@ -1,0 +1,39 @@
+name: Skill Doc Guard
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Reject non-skill-doc files
+        run: |
+          # Only these files/patterns should exist in this repo
+          ALLOWED_PATTERN='^\.\/(\.gitignore|\.github\/.*|README\.md|startupfest-skill\.md|phases\/phase-[a-z-]+\.md|LICENSE)$'
+
+          VIOLATIONS=()
+          while IFS= read -r file; do
+            if ! echo "$file" | grep -qE "$ALLOWED_PATTERN"; then
+              VIOLATIONS+=("$file")
+            fi
+          done < <(find . -not -path './.git/*' -type f)
+
+          if [ ${#VIOLATIONS[@]} -gt 0 ]; then
+            echo "::error::This repo should ONLY contain the skill document and phase files."
+            echo "::error::The following files do not belong here:"
+            for v in "${VIOLATIONS[@]}"; do
+              echo "  REJECTED: $v"
+            done
+            echo ""
+            echo "If you're seeing platform code (src/, functions/, package.json, etc.),"
+            echo "you're pushing to the WRONG REPO. The platform lives in alistaircroll/SUFagent."
+            exit 1
+          fi
+
+          echo "All files OK — this repo contains only skill doc content."
