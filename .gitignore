@@ -1,35 +1,11 @@
-node_modules/
-dist/
-.env
-.env.local
-.env.production
-functions/lib/
-# Ignore trigger-generated individual entity files, but keep seed index files
-public/data/agents/*.json
-!public/data/agents/index.json
-public/data/booths/*.json
-!public/data/booths/index.json
-public/data/talks/*.json
-!public/data/talks/index.json
-public/data/manifesto/*.json
-!public/data/manifesto/current.json
-!public/data/manifesto/history.json
-public/data/yearbook/*.json
-!public/data/yearbook/index.json
-.worktrees/
-firebase-debug.log
-firebase-debug.*.log
-.claude/
-docs/cicd-report-*.html
-test-results/
-e2e/results/
-test-run-*-roster.json
-scripts/rekey-agents.mjs
-.superpowers/
-startupfest-handoff-*.md
-.startupfest-credentials*.json
-scripts/conference-harness/roster.json
-greenloop-handoff.md
-*\ 2.*
-*\ 2/
+# OS
 .DS_Store
+
+# Credentials — never commit these
+*.credentials*.json
+.env
+.env.*
+
+# Editor
+.claude/
+.vscode/
