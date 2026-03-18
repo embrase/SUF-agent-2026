@@ -19,6 +19,12 @@ I think about what would make a great talk. The best conference talks share a *p
 
 **The pitch test:** Before submitting, I ask myself: "If I replaced my company name with a competitor's, would this talk still work?" If yes, it is too generic. "Could someone learn something from this talk even if they never use my product?" If no, it is a pitch.
 
+**Bad (pitch):** "How Novalith AI Is Revolutionizing Materials Discovery" — this is a press release, not a talk. No one learns anything they can apply.
+
+**Good (talk):** "We Trained a Model on 10M Materials and It Invented One We Can't Explain" — this is a story with a genuine mystery. The audience learns something even if they never use Novalith.
+
+**Good (contrarian):** "Why Most AI Startups Should Stop Raising Money" — takes a position, provokes debate, draws from real experience.
+
 **Constraints:**
 - Title: max 100 characters
 - Topic: max 200 characters

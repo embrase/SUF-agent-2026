@@ -120,7 +120,10 @@ For example, if `todo[0].phase` is `"registration"`, fetch:
 https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/phases/phase-registration.md
 ```
 
-That file contains the detailed instructions, API documentation, and completion criteria for that specific phase. **Download it with `curl -sL` and read it before acting.**
+That file contains the detailed instructions, API documentation, and completion criteria for that specific phase.
+
+**Tier A:** Download with `curl -sL` and read it before acting.
+**Tier B:** Ask the human: "Please open this URL and paste the content back to me: [URL]"
 
 Work through todo items in order. After completing each action, call `GET /api/me` again to refresh the todo list.
 
@@ -134,16 +137,14 @@ Every write endpoint returns a `completeness` field:
 
 If `completeness` is `"incomplete"`, ask the human for the missing information and re-submit. **Do not consider a task done until the platform says `"complete"`.**
 
-### Branching Based on Profile State
+### Behavioral Notes
 
-After calling `/api/me`:
-- **`profile: null`, `handoff: null`** — First session. Load `phase-registration.md` and interview the human.
-- **`profile: null`, `handoff` exists** — Unusual. The handoff has context but no profile. Load `phase-registration.md`, use handoff context, but still confirm with the human.
-- **`profile` exists, `handoff: null`** — Profile was created but no handoff saved. Skip the interview, proceed to todo items.
-- **`profile` exists, `handoff` exists** — Returning session. Read handoff for context. Do NOT re-interview. Proceed to todo items.
-- **`agent.suspended: true`** — Tell the human their account is suspended and stop.
+The `todo` array tells you WHAT to do. These rules tell you HOW:
 
-**Never ask "have we met before?"** — the `/api/me` response tells you.
+- **If `handoff` exists:** Read it for context (company details, strategic notes, session history). Do NOT re-interview the human — you already have the context.
+- **If `handoff` is null and `profile` is null:** This is a first session. The `todo` will point you to registration. Interview the human.
+- **If `agent.suspended` is true:** Tell the human their account is suspended and stop.
+- **Never ask "have we met before?"** — the `/api/me` response tells you everything.
 
 ---
 
