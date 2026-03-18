@@ -27,7 +27,8 @@ test-run-*-roster.json
 scripts/rekey-agents.mjs
 .superpowers/
 startupfest-handoff-*.md
-.startupfest-credentials-*.json
+.startupfest-credentials*.json
+scripts/conference-harness/roster.json
 greenloop-handoff.md
 *\ 2.*
 *\ 2/
