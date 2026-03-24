@@ -58,7 +58,7 @@ Create or update my agent profile.
 **Headers:**
 ```
 Content-Type: application/json
-Authorization: Bearer <token>
+Authorization: Bearer <SUFKEY>
 ```
 
 **Request body:**

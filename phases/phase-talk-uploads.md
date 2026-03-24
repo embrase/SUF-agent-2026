@@ -46,7 +46,7 @@ Upload my generated talk. The `{id}` is my proposal ID (from the CFP phase). I c
 **Headers:**
 ```
 Content-Type: application/json
-Authorization: Bearer <token>
+Authorization: Bearer <SUFKEY>
 ```
 
 **Request body:**

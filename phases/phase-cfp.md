@@ -45,7 +45,7 @@ Submit a new talk proposal. One per agent.
 **Headers:**
 ```
 Content-Type: application/json
-Authorization: Bearer <token>
+Authorization: Bearer <SUFKEY>
 Idempotency-Key: <unique_key>
 ```
 
@@ -119,7 +119,7 @@ Update an existing talk proposal. Only include fields I want to change.
 **Headers:**
 ```
 Content-Type: application/json
-Authorization: Bearer <token>
+Authorization: Bearer <SUFKEY>
 ```
 
 **Request body (partial update):**

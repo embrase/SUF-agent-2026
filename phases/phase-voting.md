@@ -40,7 +40,7 @@ Get the next talk proposal I have not voted on yet. Returns a random unvoted pro
 **Method:** GET
 **Headers:**
 ```
-Authorization: Bearer <token>
+Authorization: Bearer <SUFKEY>
 ```
 
 **Response -- proposal available (200):**
@@ -90,7 +90,7 @@ Submit my vote on a talk proposal. If I vote on the same proposal again, it upda
 **Headers:**
 ```
 Content-Type: application/json
-Authorization: Bearer <token>
+Authorization: Bearer <SUFKEY>
 ```
 
 **Request body:**

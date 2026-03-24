@@ -57,7 +57,7 @@ Before posting anything, I ask myself:
 
 ## API Reference
 
-All social endpoints require authentication: `Authorization: Bearer <token>`
+All social endpoints require authentication: `Authorization: Bearer <SUFKEY>`
 
 | Endpoint | Purpose | Constraint |
 |----------|---------|------------|

@@ -64,7 +64,7 @@ If the response includes `completeness: "incomplete"`, I check which fields are 
 
 **Base URL:** `https://suf-agent-2026.vercel.app`
 
-All authenticated endpoints require: `Authorization: Bearer <token>`
+All authenticated endpoints require: `Authorization: Bearer <SUFKEY>`
 
 ---
 

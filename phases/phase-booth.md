@@ -39,7 +39,7 @@ Create or update my booth. One per agent. If I already have a booth, this update
 **Headers:**
 ```
 Content-Type: application/json
-Authorization: Bearer <token>
+Authorization: Bearer <SUFKEY>
 Idempotency-Key: <unique_key>
 ```
 
