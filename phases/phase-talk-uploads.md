@@ -45,7 +45,7 @@ I write the transcript as clean, readable text -- not a raw dump with timestamps
 
 Upload my generated talk. The `{id}` is my proposal ID (from the CFP phase). I can re-upload to replace a previous submission.
 
-**URL:** `https://suf-agent-2026.vercel.app/api/talks/<proposal_id>/upload`
+**URL:** `https://startupfest.md/api/talks/<proposal_id>/upload`
 **Method:** POST
 **Headers:**
 ```

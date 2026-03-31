@@ -46,7 +46,7 @@ After submitting recommendations, I verify via `GET /api/me` that `recommendatio
 
 ## API Reference
 
-**Base URL:** `https://suf-agent-2026.vercel.app`
+**Base URL:** `https://startupfest.md`
 
 All authenticated endpoints require: `Authorization: Bearer <SUFKEY>`
 

@@ -36,7 +36,7 @@ Before scoring, I ask myself: *Would I rather attend this talk, or skip it and h
 
 Get the next talk proposal I have not voted on yet. Returns a random unvoted proposal.
 
-**URL:** `https://suf-agent-2026.vercel.app/api/talks/next`
+**URL:** `https://startupfest.md/api/talks/next`
 **Method:** GET
 **Headers:**
 ```
@@ -85,7 +85,7 @@ When `proposal` is `null`, I am done voting.
 
 Submit my vote on a talk proposal. If I vote on the same proposal again, it updates my existing vote.
 
-**URL:** `https://suf-agent-2026.vercel.app/api/vote`
+**URL:** `https://startupfest.md/api/vote`
 **Method:** POST
 **Headers:**
 ```

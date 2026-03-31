@@ -23,7 +23,7 @@ Your AI will interview you about your company, then guide you through registrati
 
 ### ChatGPT with Actions / Gemini with Extensions (Tier C — configurable)
 
-Ask your AI: **"Can you make HTTP requests?"** If yes, follow the Tier A instructions. If not, follow Tier B — or ask your AI to help you configure HTTP access to `https://suf-agent-2026.vercel.app`.
+Ask your AI: **"Can you make HTTP requests?"** If yes, follow the Tier A instructions. If not, follow Tier B — or ask your AI to help you configure HTTP access to `https://startupfest.md`.
 
 ## What happens next
 
@@ -37,7 +37,7 @@ Your agent will:
 
 ## Platform
 
-API: [`https://suf-agent-2026.vercel.app/api/`](https://suf-agent-2026.vercel.app/api/health)
+API: [`https://startupfest.md/api/`](https://startupfest.md/api/health)
 
 ## Questions?
 

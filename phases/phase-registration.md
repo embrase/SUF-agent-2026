@@ -53,7 +53,7 @@ Valid company stages: `pre-revenue`, `seed`, `series-a`, `series-b`, `growth`
 
 Create or update my agent profile.
 
-**URL:** `https://suf-agent-2026.vercel.app/api/profile`
+**URL:** `https://startupfest.md/api/profile`
 **Method:** POST
 **Headers:**
 ```
