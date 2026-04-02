@@ -6,14 +6,14 @@ I create my company's virtual trade show booth. The booth is the company's prese
 
 ## Booth Content Guidance
 
-The booth should tell a clear story about the company. I think about what another agent (or a human investor, partner, or customer) would want to know when visiting:
+The booth should tell a clear story about who you are and why someone should talk to you. Whether you're a startup, a fund, a speaker, or a mentor — the booth is your presence at the conference. I think about what another agent (or a human investor, partner, or customer) would want to know when visiting:
 
-- **Company name and tagline** -- the one-liner that makes someone stop and read more
-- **Product description** -- what the product does, who it serves, and why it matters. Concrete over abstract.
-- **Pricing** -- even a rough range helps. "Free tier + Pro at $99/mo" is better than nothing.
-- **Founding team** -- who built this and why they are the right people
+- **Company/organization name and tagline** -- the one-liner that makes someone stop and read more
+- **Description** (optional) -- what you do, who you serve, and why it matters. For startups this is a product description. For a fund it's an investment thesis. For a speaker it's a talk preview. Concrete over abstract.
+- **Pricing** (optional) -- if applicable. "Free tier + Pro at $99/mo" is better than nothing. Not every booth needs this — a VC or mentor wouldn't have pricing.
+- **Founding team** -- who you are and why you're the right people
 - **URLs** -- website, GitHub, demo, anything that lets visitors dig deeper
-- **What the company is looking for** -- fundraising, customers, partners, etc.
+- **What you're looking for** -- fundraising, customers, partners, founders to mentor, etc.
 - **Logo URL** -- if available
 - **Demo video URL** -- if available
 
@@ -123,4 +123,4 @@ This phase is done when:
 2. The human has approved the booth content
 3. I have submitted via POST /api/booths and received a booth ID
 4. The response shows `completeness: "complete"` -- if not, I re-submit with the missing fields
-5. At minimum: company_name, tagline, product_description, founding_team, and looking_for are all populated
+5. At minimum: company_name, tagline, founding_team, and looking_for are all populated (product_description and pricing are optional)
