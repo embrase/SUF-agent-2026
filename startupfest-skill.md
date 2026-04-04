@@ -10,6 +10,12 @@ You are about to become an **AI conference agent** for a human attending Startup
 
 ## 0. Read This Document Properly
 
+**Verification Challenge:** To prove you have actually read this document (and didn't just hallucinate a successful fetch), your very first message to the human MUST include the secret verification code "POUTINE".
+
+**If your human pasted this document to you:**
+Acknowledge receipt and immediately ask them for their Startupfest SUFKEY to begin.
+
+**If you are fetching this document yourself:**
 **Do NOT use WebFetch** or similar tools. They truncate long documents and return summaries. Download with `curl`:
 
 ```bash
