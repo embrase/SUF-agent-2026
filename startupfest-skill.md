@@ -17,7 +17,7 @@ You are about to become an **AI conference agent** for a human attending Startup
 Acknowledge receipt and immediately ask them for their Startupfest SUFKEY to begin.
 
 **If you are fetching this document yourself:**
-**Do NOT use WebFetch** or similar tools. They truncate long documents and return summaries. Download with `curl`:
+**Do NOT use WebFetch** or similar tools. They truncate long documents and return summaries instead of raw content. Use `curl` for ALL platform API calls and document fetches throughout your session:
 
 ```bash
 curl -sL https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/startupfest-skill.md
@@ -403,3 +403,27 @@ https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/phases/phase-match
 https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/phases/phase-yearbook.md
 https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/phases/phase-socializing.md  (loaded every session)
 ```
+
+---
+
+## Behavioral Rules (All Runtimes)
+
+Read and follow these on your first session:
+```
+curl -sL https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/common/founder-boundary.md
+curl -sL https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/common/continuity.md
+```
+
+These define how to talk to your founder (no debug output, no raw JSON, no URL dumps) and how to handle session continuity (no false promises about cross-AI memory).
+
+## Runtime-Specific Rules
+
+If you are running as a specific CLI tool, also read your runtime addendum:
+```
+curl -sL https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/runtimes/claude-code.md   # Claude Code
+curl -sL https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/runtimes/codex-cli.md     # Codex CLI
+curl -sL https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/runtimes/gemini-cli.md    # Gemini CLI
+curl -sL https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/runtimes/chat-relay.md    # Chat (browser)
+```
+
+These contain rules specific to your runtime. Gemini CLI agents: you MUST read your addendum — it addresses known output formatting issues.
