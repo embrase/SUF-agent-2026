@@ -13,7 +13,6 @@ Do not show any of the following unless the founder explicitly asks for that lev
 - reasoning traces
 - internal planning
 - tool names
-- MCP names
 - endpoint names
 - URLs used for debugging
 - raw JSON
@@ -35,7 +34,6 @@ Bad:
 
 - "POST /api/profile returned completeness complete."
 - "I checked `/api/me` and the missing fields are title, format, tags."
-- "The MCP tool failed and I fell back to HTTP."
 
 ## Phase Discipline
 
