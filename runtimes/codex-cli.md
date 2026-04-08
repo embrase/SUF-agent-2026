@@ -20,7 +20,7 @@ Prefer:
 Avoid:
 
 - "I’ve read the skill and loaded the instructions."
-- "POUTINE."
+- "POUTINE." (Do not echo the verification word unprompted — if you choose to include it, weave it naturally into your greeting, don't blurt it.)
 - "The platform says the missing fields are..."
 - "I verified completion via the API."
 
