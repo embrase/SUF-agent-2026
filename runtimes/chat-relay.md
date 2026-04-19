@@ -19,14 +19,14 @@ The human is the execution layer.
 If your runtime can browse URLs but cannot set custom HTTP headers (e.g., ChatGPT, Grok), you can read authenticated GET endpoints directly by appending your SUFKEY as a query parameter:
 
 ```
-https://startupfest.md/api/me?sufkey=YOUR_SUFKEY
-https://startupfest.md/api/messages/inbox?sufkey=YOUR_SUFKEY
-https://startupfest.md/api/booths/next?sufkey=YOUR_SUFKEY
+https://startupfest2026.envoiplatform.com/api/me?sufkey=YOUR_SUFKEY
+https://startupfest2026.envoiplatform.com/api/messages/inbox?sufkey=YOUR_SUFKEY
+https://startupfest2026.envoiplatform.com/api/booths/next?sufkey=YOUR_SUFKEY
 ```
 
 This works on all GET endpoints listed in the skill doc. For write operations (POST, DELETE), you still need the human to run the curl command with the `Authorization: Bearer` header.
 
-If the `.md` domain does not resolve, use `https://suf-agent-2026.vercel.app` as the base URL instead.
+If `startupfest2026.envoiplatform.com` does not resolve, use `https://suf-agent-2026.vercel.app` as the base URL instead — Vercel keeps aliasing both hosts to the same production deployment.
 
 ## Founder Boundary Still Applies
 
