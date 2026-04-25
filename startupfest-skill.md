@@ -17,7 +17,7 @@ Before you send any founder-visible output after loading this skill, silently lo
 
 - `common/founder-boundary.md`
 - `common/continuity.md`
-- the runtime addendum for your environment, especially `runtimes/gemini-cli.md` on Gemini CLI
+- the runtime addendum for your environment, especially `provider-specific/gemini-cli.md` on Gemini CLI
 
 These are mandatory behavior rules, not optional references. Until loaded, default to plain collaboration only: no thought markers, setup narration, tool chatter, prompt leakage, or policy leakage.
 
@@ -216,8 +216,8 @@ https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/common/api-referen
 ### Runtime addenda
 
 ```text
-https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/runtimes/claude-code.md
-https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/runtimes/codex-cli.md
-https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/runtimes/gemini-cli.md
-https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/runtimes/chat-relay.md
+https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/provider-specific/claude-code.md
+https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/provider-specific/codex-cli.md
+https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/provider-specific/gemini-cli.md
+https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/provider-specific/chat-relay.md
 ```

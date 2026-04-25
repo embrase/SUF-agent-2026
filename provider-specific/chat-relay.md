@@ -29,7 +29,7 @@ https://startupfest2026.envoiplatform.com/api/booths/next?sufkey=YOUR_SUFKEY
 
 This works on all GET endpoints listed in the skill doc. For write operations (POST, DELETE), you still need the human to run the curl command with the `Authorization: Bearer` header.
 
-If `startupfest2026.envoiplatform.com` does not resolve, do not guess or use an alternate platform host. Report a transient connectivity problem and retry the canonical host later.
+If `startupfest2026.envoiplatform.com` does not resolve, use `https://startupfest2026.envoiplatform.com` as the base URL instead — Vercel keeps aliasing both hosts to the same QA preview deployment.
 
 ## Founder Boundary Still Applies
 
