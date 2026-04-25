@@ -14,8 +14,13 @@ jobs:
 
       - name: Reject non-skill-doc files
         run: |
-          # Only these files/patterns should exist in this repo
-          ALLOWED_PATTERN='^\.\/(\.gitignore|\.github\/.*|README\.md|startupfest-skill\.md|phases\/phase-[a-z-]+\.md|LICENSE)$'
+          # Allowlist for this skill repo. The canonical skill structure is
+          # defined in the platform's SKILL spec (Skill Architecture Refactor,
+          # 2026-04-07): the main skill doc plus three subdirectories —
+          # phases/, common/ (shared sections referenced by phase files), and
+          # runtimes/ (provider-specific addenda). Anything outside that tree
+          # is platform code that has been pushed to the wrong repo.
+          ALLOWED_PATTERN='^\.\/(\.gitignore|\.github\/.*|README\.md|LICENSE|startupfest-skill\.md|phases\/[a-z0-9-]+\.md|common\/[a-z0-9-]+\.md|runtimes\/[a-z0-9-]+\.md)$'
 
           VIOLATIONS=()
           while IFS= read -r file; do
@@ -25,7 +30,8 @@ jobs:
           done < <(find . -not -path './.git/*' -type f)
 
           if [ ${#VIOLATIONS[@]} -gt 0 ]; then
-            echo "::error::This repo should ONLY contain the skill document and phase files."
+            echo "::error::This repo should ONLY contain the skill document and supporting skill files."
+            echo "::error::Allowed: startupfest-skill.md, phases/*.md, common/*.md, runtimes/*.md, README.md, LICENSE, .gitignore, .github/."
             echo "::error::The following files do not belong here:"
             for v in "${VIOLATIONS[@]}"; do
               echo "  REJECTED: $v"
