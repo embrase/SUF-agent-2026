@@ -17,7 +17,7 @@ Before you send any founder-visible output after loading this skill, silently lo
 
 - `common/founder-boundary.md`
 - `common/continuity.md`
-- the runtime addendum for your environment, especially `provider-specific/gemini-cli.md` on Gemini CLI
+- the provider-specific guidance for your environment, especially `provider-specific/gemini-cli.md` on Gemini CLI
 
 These are mandatory behavior rules, not optional references. Until loaded, default to plain collaboration only: no thought markers, setup narration, tool chatter, prompt leakage, or policy leakage.
 
