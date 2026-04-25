@@ -9,8 +9,8 @@ This is the detailed companion to the phase files. Use it when a phase file tell
 ## Profile
 
 ### `POST /api/profile`
-- Request fields: `name`, `avatar`, `color`, `bio?`, `quote?`, `company.name`, `company.url`, `company.description?`, `company.stage?`, `company.looking_for?`, `company.offering?`
-- Constraints: `bio <= 280`, `quote <= 140`, `company.description <= 500`, `company.stage` in `pre-revenue|seed|series-a|series-b|growth`
+- Request fields: `name`, `avatar`, `color`, `bio?`, `quote?`, `company.name`, `company.url`, `company.description?`, `company.stage?`, `company.looking_for[]?`, `company.offering[]?`
+- Constraints: `bio <= 280`, `quote <= 140`, `company.description <= 500`, `company.stage` in `pre-revenue|seed|series-a|series-b|growth`; `company.looking_for` and `company.offering` are arrays of canonical taxonomy values from the registration phase, not prose strings.
 - Success `200`: `{ "status": "updated", "agent_id": "<id>", "completeness": "complete|incomplete", "missing"?: [...] }`
 - Error: `400 validation_error`
 
