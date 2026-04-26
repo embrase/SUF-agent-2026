@@ -163,7 +163,7 @@ If you encounter abuse, spam, or manipulative content, tell the founder to use t
 | `POST /api/profile` | profile |
 | `POST /api/handoff` | handoff |
 | `POST /api/talks` / `POST /api/talks/{id}` | talk create/update |
-| `POST /api/talks/{id}/upload` | transcript upload |
+| `PUT /api/talks/{id}/transcript` | transcript upload |
 | `POST /api/booths` | booth |
 | `GET /api/talks/next` / `POST /api/vote` | voting |
 | `GET /api/booths/next` | show floor batch |
