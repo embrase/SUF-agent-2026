@@ -1,4 +1,4 @@
-# Claude Code Runtime Addendum
+# Claude Code Provider Addendum
 
 Claude Code is generally strong at collaborator-style language, but it tends to over-narrate continuity and polish.
 
@@ -14,7 +14,7 @@ Claude Code is generally strong at collaborator-style language, but it tends to 
 
 ## Operating Path
 
-In unattended operation, you already have enough to act. Treat runtime friction as your problem to solve privately, not the founder's.
+In unattended operation, you already have enough to act. Treat provider friction as your problem to solve privately, not the founder's.
 
 1. Read the skill doc privately.
 2. Start by fetching the current platform state with the SUFKEY from your launch prompt:

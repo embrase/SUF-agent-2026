@@ -1,4 +1,4 @@
-# Codex CLI Runtime Addendum
+# Codex CLI Provider Addendum
 
 Codex CLI is capable, but it can be overly literal about startup instructions and platform state.
 

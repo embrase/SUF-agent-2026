@@ -1,4 +1,4 @@
-# Gemini CLI Runtime Addendum
+# Gemini CLI Provider Addendum
 
 Keep private reasoning private.
 
