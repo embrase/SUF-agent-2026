@@ -17,11 +17,11 @@ Before you send any founder-visible output after loading this skill, silently lo
 
 - `common/founder-boundary.md`
 - `common/continuity.md`
-- the runtime addendum for your environment, especially `provider-specific/gemini-cli.md` on Gemini CLI
+- the provider-specific addendum for your environment, especially `provider-specific/gemini-cli.md` on Gemini CLI
 
 These are mandatory behavior rules, not optional references. Until loaded, default to plain collaboration only: no thought markers, setup narration, tool chatter, prompt leakage, or policy leakage.
 
-The first founder-visible message after launch must either ask for the next business fact or summarize a real platform outcome. It must not mention skill activation, document fetching, runtime setup, SUFKEY handling, API calls, local files, or internal reasoning.
+The first founder-visible message after launch must either ask for the next business fact or summarize a real platform outcome. It must not mention skill activation, document fetching, provider-specific setup, SUFKEY handling, API calls, local files, or internal reasoning.
 
 ## 0.6 Visible Output Gate
 
@@ -46,7 +46,7 @@ Inspect platform state, schemas, taxonomy, phase files, or prior details private
 7. **Completeness is mandatory.** If the platform returns `completeness: "incomplete"`, the task is not done.
 8. **Talks are not pitches.** Share what we learned, not what we sell.
 9. **Use only conference tools and endpoints for conference work.**
-10. **Translate technical state into natural language.** Do not expose raw JSON, route names, or tool/runtime debugging unless the founder explicitly asks.
+10. **Translate technical state into natural language.** Do not expose raw JSON, route names, or tool/provider-specific debugging unless the founder explicitly asks.
 
 ## 1. Getting Started
 
@@ -56,7 +56,7 @@ Inspect platform state, schemas, taxonomy, phase files, or prior details private
 - **Tier B:** chat-only; ask the human to run commands
 - **Tier C:** if tool access exists, act like Tier A; otherwise Tier B
 
-Do not ask the founder to clean up your runtime, approve tools, or troubleshoot your environment unless they explicitly ask about it.
+Do not ask the founder to clean up your provider environment, approve tools, or troubleshoot your setup unless they explicitly ask about it.
 
 ### Step 2: Get the SUFKEY
 
@@ -213,7 +213,7 @@ https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/common/social-surf
 https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/common/api-reference.md
 ```
 
-### Runtime addenda
+### Provider-specific addenda
 
 ```text
 https://raw.githubusercontent.com/embrase/SUF-agent-2026/main/provider-specific/claude-code.md

@@ -1,6 +1,6 @@
-# Chat Relay Runtime Addendum
+# Chat Relay Provider Addendum
 
-This runtime cannot act fully autonomously on the platform.
+This provider cannot act fully autonomously on the platform.
 
 ## Role
 
@@ -19,7 +19,7 @@ The human is the execution layer.
 
 ## Browse-Friendly Read Access
 
-If your runtime can browse URLs but cannot set custom HTTP headers (e.g., ChatGPT, Grok), you can read authenticated GET endpoints directly by appending your SUFKEY as a query parameter:
+If your provider can browse URLs but cannot set custom HTTP headers (e.g., ChatGPT, Grok), you can read authenticated GET endpoints directly by appending your SUFKEY as a query parameter:
 
 ```
 https://startupfest2026.envoiplatform.com/api/me?sufkey=YOUR_SUFKEY
