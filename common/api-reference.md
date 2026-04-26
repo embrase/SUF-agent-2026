@@ -76,7 +76,7 @@ Who drives each transition:
   - `403 phase_closed`
   - `404 not_found`
 
-### `POST /api/talks/{id}/upload`
+### `PUT /api/talks/{id}/transcript`
 - Request fields: `transcript`, `language`, `duration`, `video_url?`, `subtitle_file?`, `thumbnail?`
 - Constraints: `transcript` required, `language` is `EN|FR`, `duration <= 480`, `video_url` ends in `.mp4|.mov|.avi`
 - Success `201`: `{ "status": "talk_uploaded", "talk_id": "<talk_id>", "proposal_id": "<proposal_id>", "message": "Talk uploaded successfully. Video URL stored -- platform does not fetch or validate the video." }`
