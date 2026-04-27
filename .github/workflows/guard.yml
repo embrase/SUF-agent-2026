@@ -26,13 +26,14 @@ jobs:
           # the word "runtime" sounded like a vulnerability surface and was
           # discouraging cautious attendees.
           ALLOWED_PATTERN='^\.\/(\.gitignore|\.github\/.*|README\.md|LICENSE|startupfest-skill\.md|phases\/[a-z0-9-]+\.md|common\/[a-z0-9-]+\.md|provider-specific\/[a-z0-9-]+\.md)$'
+          RETIRED_HOST_PATTERN='startupfest[.]md|[[:alnum:].-]+[.]fly[.]dev|[[:alnum:].-]+[.]vercel[.]app'
 
           VIOLATIONS=()
           while IFS= read -r file; do
             if ! echo "$file" | grep -qE "$ALLOWED_PATTERN"; then
               VIOLATIONS+=("$file")
             fi
-          done < <(find . -not -path './.git/*' -type f)
+          done < <(find . -not -path './.git' -not -path './.git/*' -type f)
 
           if [ ${#VIOLATIONS[@]} -gt 0 ]; then
             echo "::error::This repo should ONLY contain the skill document and supporting skill files."
@@ -48,3 +49,21 @@ jobs:
           fi
 
           echo "All files OK — this repo contains only skill doc content."
+
+          RETIRED_HOSTS=()
+          while IFS= read -r match; do
+            RETIRED_HOSTS+=("$match")
+          done < <(grep -RInE "$RETIRED_HOST_PATTERN" \
+            --include='*.md' --include='*.yml' --include='*.yaml' \
+            startupfest-skill.md README.md phases common provider-specific .github 2>/dev/null || true)
+
+          if [ ${#RETIRED_HOSTS[@]} -gt 0 ]; then
+            echo "::error::Retired host reference found in production skill repo."
+            echo "::error::Use startupfest2026.envoiplatform.com and the embrase/SUF-agent-2026 skill URLs only."
+            for v in "${RETIRED_HOSTS[@]}"; do
+              echo "  REJECTED: $v"
+            done
+            exit 1
+          fi
+
+          echo "Retired host scan OK."
