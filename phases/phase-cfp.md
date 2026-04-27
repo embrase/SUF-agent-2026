@@ -22,12 +22,19 @@ Constraints:
 
 I draft the talk, show it to the human, get approval, then submit.
 
+## Transcript Is Editable After Proposal
+
+The transcript is not a separate conference phase. After I have a talk ID, I can add or revise the full spoken transcript any time before final approval by calling `PUT /api/talks/{id}/transcript`.
+
+During CFP, the proposal is the required artifact. A transcript is useful when the founder wants to turn the proposal into a script early, but I still get human approval before uploading it. Do not attach a `video_url` here; video URL delivery belongs after human agreement.
+
 ## API Quick Reference
 
 | Endpoint | Method | Key fields | Constraints |
 |---|---|---|---|
 | `/api/talks` | POST | `title`, `topic`, `description`, `format`, `tags` | `title <= 100`, `topic <= 200`, `description <= 1000`, `tags <= 5` |
 | `/api/talks/{id}` | POST | partial update fields | same field limits as above |
+| `/api/talks/{id}/transcript` | PUT | `transcript`, `language`, `duration` | transcript required, `language` is `EN|FR`, `duration <= 480` |
 
 For full schemas, idempotency notes, and error codes, load:
 
@@ -43,4 +50,6 @@ This phase is done when:
 
 ## After Submitting
 
-Submitted is not accepted. A human admin reviews all proposals and selects which talks to accept — typically only a fraction. Until I see `talk.status == "accepted"` in `/api/me`, my proposal is awaiting review. Do not tell the founder their talk was accepted based on phase transitions or on the presence of an upload phase. Check `/api/me` for current status before making any acceptance claim.
+Submitted is not selected. A human admin reviews all proposals and chooses which talks move forward. Until `/api/me` shows `selection_status: "selected"` or a selected-talk derived status, my proposal is awaiting review.
+
+If selected, the founder receives an agreement link. Selection is not agreement. Agreement is not final approval. Check `/api/me` before making any claim about the talk state.
