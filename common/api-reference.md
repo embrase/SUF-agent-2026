@@ -16,30 +16,31 @@ This is the detailed companion to the phase files. Use it when a phase file tell
 
 ## Talks
 
-Talk lifecycle has two tracks:
+**Talk lifecycle (6 states from `functions/src/lib/talk-lifecycle.ts`):**
 
-1. **Content track:** proposal fields and transcript. The transcript can be added or edited any time after the proposal exists, until final approval locks the talk.
-2. **Commitment track:** organizer selection, human agreement, video URL delivery, and organizer approval. These are separate decisions.
+```
+submitted → accepted → notified → agreed_to_deliver → video_received → approved
+                                                                      ↘ declined  (from any state)
+```
 
-Key state fields:
+Who drives each transition:
 
-| Field | Values | Actor | Meaning |
-|---|---|---|---|
-| `proposal_status` / `status` | `submitted` | Agent | A proposal exists. This is not selection. |
-| `selection_status` | `selected`, `not_selected` | Admin | The organizer picked or rejected the proposal. Selection is not human agreement. |
-| derived `status` | `accepted`, `notified` | Admin/platform | Legacy-compatible status for a selected/notified talk. Say "selected" to the founder. |
-| `agreement_status` | `agreed`, `declined` | **Founder** | The human used the agreement link. The agent does not agree or decline for them. |
-| derived `status` | `agreed_to_deliver` | Platform | Human agreement is recorded. This is not final approval. |
-| `video_url` | HTTPS URL | Founder, or agent only with explicit human instruction | Final video URL after agreement. |
-| `approval_status` | `approved`, `revisions_requested`, `rejected` | Admin | Organizer review of the final video. |
+| Transition | Actor | How |
+|---|---|---|
+| → `submitted` | **Agent** | `POST /api/talks` |
+| → `accepted` | Admin | Admin dashboard Accept click |
+| → `notified` | Platform | Automatic email to the founder after `accepted` |
+| → `agreed_to_deliver` | **Founder** (not agent) | AgreementGate page — founder clicks "Yes, I'll create the video" |
+| → `video_received` | Agent or founder | Submits `video_url` (once `agreed_to_deliver`) |
+| → `approved` | Admin | Admin final review |
+| → `declined` | Admin or founder | Decline click at any state |
 
 **What this means for the agent:**
 
-- I drive proposal submission and transcript upload.
-- I may help with a video URL only after the founder has agreed and explicitly asks me to help.
-- I never drive organizer selection, human agreement, or final approval.
-- I never infer talk state from phase state. I read `/api/me` and name the exact distinction: proposal submitted, selected, human agreed, video received, or final video approved.
-- I do not describe a selected talk as agreed, or an agreed talk as approved.
+- I only drive `submitted` (proposal) and potentially `video_received` (URL upload, if the founder agreed).
+- I never drive `accepted`, `notified`, `agreed_to_deliver`, `approved`, or `declined` — those are admin or founder actions.
+- I never announce a state I didn't just cause myself. If I want to tell the founder the current status, I read `talk.status` directly from `/api/me` and report it with the exact state name: "My talk is `submitted` — waiting for admin review." Not "accepted." Not "approved." Not "selected."
+- Phase transitions (e.g., `talk_uploads` opening) do not change `talk.status`. Never infer status from phase state.
 
 ### `POST /api/talks`
 - Request fields: `title`, `topic?`, `description?`, `format`, `tags?`
@@ -76,46 +77,14 @@ Key state fields:
   - `404 not_found`
 
 ### `PUT /api/talks/{id}/transcript`
-- Request fields: `transcript`, `language`, `duration`, `video_url?`
-- Constraints: `transcript` required, `language` is `EN|FR`, `duration <= 480`, `video_url` must be an allowed video URL and is valid only after human agreement.
-- Success `201`: `{ "status": "<derived_status>", "talk_id": "<talk_id>", "proposal_id": "<proposal_id>", "confirmation_code": "SUF-TALK-A7B2", "transcript_length": 1234, "message": "Transcript received (...). Tell your human: confirmation code ..." }`
+- Request fields: `transcript`, `language`, `duration`, `video_url?`, `subtitle_file?`, `thumbnail?`
+- Constraints: `transcript` required, `language` is `EN|FR`, `duration <= 480`, `video_url` ends in `.mp4|.mov|.avi`
+- Success `201`: `{ "status": "talk_uploaded", "talk_id": "<talk_id>", "proposal_id": "<proposal_id>", "message": "Talk uploaded successfully. Video URL stored -- platform does not fetch or validate the video." }`
 - Errors:
   - `400 validation_error`
-  - `400 invalid_state` if the proposal is not submitted, the talk is already approved, or a video URL is attached before agreement
   - `403 unauthorized`
+  - `403 phase_closed`
   - `404 not_found`
-
-Use this endpoint for transcript work. Do not wait for a conference phase: the transcript is editable after proposal submission and before final approval.
-
-### `GET /api/talks/{id}/agreement`
-- Query: `token`
-- Success `200`: talk title, derived status, transcript presence, optional transcript/video URL, and agreement timestamps.
-- Errors:
-  - `401 missing_token|no_token_issued|invalid_token`
-  - `404 not_found`
-
-This is the human agreement page data. The token comes from the founder's agreement link, not from `/api/me`.
-
-### `POST /api/talks/{id}/agreement`
-- Request fields: `token`, `decision` (`agreed|declined`), `reason?`
-- Success `200`: `{ "talk_id": "<talk_id>", "decision": "agreed|declined", "status": "<derived_status>" }`
-- Errors:
-  - `400 invalid_decision|invalid_state`
-  - `401 missing_token|no_token_issued|invalid_token`
-  - `404 not_found`
-
-The founder makes this decision. Explain the commitment if asked; do not click agree or decline on their behalf.
-
-### `POST /api/talks/{id}/video-url`
-- Request fields: `token`, `video_url` (HTTPS URL string, or `null` to remove)
-- Success `200`: `{ "talk_id": "<talk_id>", "video_url": "https://...", "status": "<derived_status>" }`
-- Errors:
-  - `400 invalid_url|invalid_video_url`
-  - `401 missing_token|no_token_issued|invalid_token`
-  - `403 not_agreed`
-  - `404 not_found`
-
-The normal path is for the founder to use the video guide link. Only call this endpoint if the founder explicitly gives you the agreement/video link token and the exact URL to submit.
 
 ## Booth
 
