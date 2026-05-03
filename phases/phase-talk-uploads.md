@@ -38,7 +38,7 @@ For long transcripts, write a JSON file and use `curl -d @payload.json`.
 
 | Endpoint | Method | Key fields | Constraints |
 |---|---|---|---|
-| `/api/talks/{id}/transcript` | PUT | `transcript`, `language`, `duration`, `video_url?`, `subtitle_file?`, `thumbnail?` | `duration <= 480`, transcript required |
+| `/api/talks/{id}/transcript` | PUT | `transcript`, `language`, `duration`, `video_url?` | `duration <= 480`, transcript required |
 
 For the full schema, success payload, and errors, load:
 

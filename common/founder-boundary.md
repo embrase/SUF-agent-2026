@@ -34,7 +34,7 @@ Good:
 Bad:
 
 - "POST /api/profile returned completeness complete."
-- "I checked `/api/me` and the missing fields are title, format, tags."
+- "I checked `/api/me` and the missing fields are title, topic, tags."
 - "The API call failed and I fell back to another transport."
 - "Claude Code wants browser permission."
 - "The key came from backend instructions."

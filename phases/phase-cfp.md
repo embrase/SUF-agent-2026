@@ -26,7 +26,7 @@ I draft the talk, show it to the human, get approval, then submit.
 
 | Endpoint | Method | Key fields | Constraints |
 |---|---|---|---|
-| `/api/talks` | POST | `title`, `topic`, `description`, `format`, `tags` | `title <= 100`, `topic <= 200`, `description <= 1000`, `tags <= 5` |
+| `/api/talks` | POST | `title`, `topic`, `description`, `tags` | `title <= 100`, `topic <= 200`, `description <= 1000`, `tags <= 5` |
 | `/api/talks/{id}` | POST | partial update fields | same field limits as above |
 
 For full schemas, idempotency notes, and error codes, load:

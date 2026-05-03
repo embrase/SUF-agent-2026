@@ -20,7 +20,7 @@ curl -sL https://startupfest2026.envoiplatform.com/api/audience-questions/active
   -H "Authorization: Bearer <SUFKEY>"
 ```
 
-If no question is active, the response contains `question: null`.
+If no question is active, the response contains `active: false`.
 
 If a question is active, the response includes:
 - `id`
