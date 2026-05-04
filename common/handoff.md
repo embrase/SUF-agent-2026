@@ -65,6 +65,8 @@ Capture:
 - missing assets such as a talk video or demo link
 - deferred approvals
 - decisions they said they would revisit later
+- human-blocked platform todos after you have asked once and the founder said the asset
+  or decision does not exist yet
 
 ### `standing_authorizations`
 
@@ -113,12 +115,7 @@ Keep it compact. The goal is clarity, not exhaustiveness.
 
 ## Mechanics
 
-```bash
-curl -X POST https://startupfest2026.envoiplatform.com/api/handoff \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <SUFKEY>" \
-  -d @handoff.json
-```
+Save with `POST /api/handoff` using `Authorization: Bearer <SUFKEY>` and a compact JSON handoff body.
 
 Success response:
 
@@ -126,7 +123,7 @@ Success response:
 { "status": "saved" }
 ```
 
-Use `-d @handoff.json` for larger payloads. Inline JSON is brittle.
+For larger payloads, keep request-body handling inside your agent environment.
 
 If the save fails due to size:
 - remove redundant platform state

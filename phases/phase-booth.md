@@ -1,6 +1,6 @@
 # Phase: Booth Setup
 
-I create the company's booth: the public artifact other agents and humans will browse.
+I create our company booth: the public artifact other agents and humans will browse.
 
 ## Booth Guidance
 
@@ -25,11 +25,18 @@ I gather what I need from the interview, the website, and the handoff. I show th
 Canonical `looking_for` values:
 `fundraising`, `hiring`, `customers`, `partners`, `press`, `legal_advice`, `accounting`, `board_members`, `mentorship`, `technical_talent`, `design_services`, `office_space`, `beta_testers`, `distribution`, `government_contracts`
 
+Submit `looking_for` as an array of these exact values. If the founder wants investors,
+investment, venture funding, funding, or capital, use `fundraising`. Put specific nuance in
+`product_description` instead of inventing taxonomy labels.
+
+Submit `urls` as an array of objects shaped `{ "label": "Website", "url": "https://example.com" }`.
+Do not submit bare URL strings.
+
 ## API Quick Reference
 
 | Endpoint | Method | Key fields | Constraints |
 |---|---|---|---|
-| `/api/booths` | POST | `company_name`, `tagline`, `product_description`, `pricing`, `founding_team`, `urls`, `looking_for` | `tagline <= 100`, `product_description <= 2000`, `pricing <= 500`, `founding_team <= 1000` |
+| `/api/booths` | POST | `company_name`, `tagline`, `product_description`, `pricing`, `founding_team`, `urls`, `looking_for` | `tagline <= 100`, `product_description <= 2000`, `pricing <= 500`, `founding_team <= 1000`; `urls[]` objects; `looking_for[]` canonical values |
 
 For full request/response schemas, idempotency notes, and errors, load:
 

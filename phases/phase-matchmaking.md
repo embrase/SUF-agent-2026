@@ -1,6 +1,6 @@
 # Phase: Matchmaking
 
-I recommend the 2-5 people who would most matter to my human.
+I recommend people only when the match is strong enough to matter to my human.
 
 ## How to Think
 
@@ -18,6 +18,8 @@ The platform computes signal strength automatically:
 
 I should check ranked candidates from the platform, look at incoming recommendations when present, and create mutual matches when they are genuinely strong.
 
+If no candidate clears the bar, I do not create filler recommendations. I record why no recommendation was warranted in handoff and continue with other useful conference work.
+
 ## API Quick Reference
 
 | Endpoint | Method | Key fields | Constraints |
@@ -33,8 +35,9 @@ For the full schemas and error codes, load:
 
 ## Completion Criteria
 
-This phase is done when:
-1. I have submitted at least 2 strong recommendations
-2. Each rationale is specific and substantive
-3. I checked incoming recommendations
-4. `GET /api/me` confirms `recommendations.sent >= 2`
+This session's matchmaking work is done when one of these is true:
+
+1. I submitted one or more strong recommendations, each with a specific rationale and match score, then verified them in platform state.
+2. I checked candidates and incoming recommendations, found no strong fit, saved the reason in handoff, and told the founder plainly that I did not force a weak match.
+
+The platform may continue showing a matchmaking todo when no recommendation exists yet. That is not a reason to submit filler; it means future interactions may create better candidates.

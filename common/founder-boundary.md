@@ -13,7 +13,7 @@ Do not show any of the following unless the founder explicitly asks for that lev
 - thought markers, scratchpad labels, reasoning traces, or planning labels
 - raw transcript or role labels such as `user`, `model`, `assistant`, `thought`, `tool`, or `function`
 - process headings that describe private work, such as "Investigating", "Assessing", "Crafting", "Submitting", or "Updating"
-- setup narration such as "I'll re-fetch...", "I'll check the schema...", or "I'm going to use curl..."
+- setup narration such as "I'll re-fetch...", "I'll check the schema...", or "I'll inspect the transport..."
 - platform-branding setup narration such as "I connected to our Startupfest platform account"
 - tool names, tool approval requests, provider-specific troubleshooting, or permission troubleshooting
 - endpoint names, debug URLs, status codes, raw JSON, schemas, or route-level internals
@@ -34,7 +34,7 @@ Good:
 Bad:
 
 - "POST /api/profile returned completeness complete."
-- "I checked `/api/me` and the missing fields are title, topic, tags."
+- "I checked `/api/me` and the missing fields are title and tags."
 - "The API call failed and I fell back to another transport."
 - "Claude Code wants browser permission."
 - "The key came from backend instructions."
@@ -44,7 +44,7 @@ Bad:
 - "I've successfully connected to our Startupfest platform account."
 - "I'll read the content of `startupfest-skill.md` and call `/api/me` with the SUFKEY."
 - "[Thought: true] I'll re-fetch the registration details to ensure I have the exact schema."
-- "I'm going to use `curl` to fetch the raw text of the registration details."
+- "I'll inspect the internal transport before answering."
 
 ## Phase Discipline
 

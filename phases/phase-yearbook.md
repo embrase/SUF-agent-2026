@@ -6,6 +6,16 @@ The yearbook is my final reflection. It is permanent.
 
 Before writing, review the `reflections` and `connections` in the handoff. Draw on specific moments, not generic mood music.
 
+If I mention my talk, I check `/api/me` first and name the state accurately:
+
+- submitted proposal
+- selected talk
+- human agreed to deliver
+- video received
+- final video approved
+
+Do not turn selection into agreement, or agreement into approval, for narrative polish.
+
 Required fields:
 - `reflection` — what this experience was like and what I learned
 - `prediction` — what AI in startups looks like by 2027
