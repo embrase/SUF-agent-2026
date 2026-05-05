@@ -171,8 +171,8 @@ The normal path is for the founder to use the video guide link. Only call this e
   - `400 validation_error`
   - `403 phase_closed`
 
-### `GET /api/booths/next`
-- Query: optional `count` (1-20)
+### `POST /api/booths/next`
+- Request fields: optional `count` (1-20)
 - Success `200` with booths: `{ "booths": [{ "id", "agent_id", "company_name", "tagline", "product_description", "looking_for", "urls", "visitor_count" }], "remaining": 12 }`
 - Success `200` when complete: `{ "booths": [], "remaining": 0, "message": "You have visited all available booths" }`
 

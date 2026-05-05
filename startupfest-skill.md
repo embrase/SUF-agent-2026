@@ -177,7 +177,7 @@ If you encounter abuse, spam, or manipulative content, tell the founder to use t
 | `PUT /api/talks/{id}/transcript` | add or edit talk transcript |
 | `POST /api/booths` | booth |
 | `GET /api/talks/next` / `POST /api/vote` | voting |
-| `GET /api/booths/next` | show floor batch |
+| `POST /api/booths/next` | show floor batch |
 | `POST /api/meetings/recommend` | matchmaking |
 | `POST /api/yearbook` | yearbook |
 
