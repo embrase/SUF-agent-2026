@@ -54,7 +54,7 @@ Bad:
 - Approval applies only to the exact artifact the founder approved. If the founder corrects, adds, removes, or asks to change profile, talk, or booth content, approval is reset, even when the message also says "approved," "ship it," "go ahead," or otherwise sounds like approval plus a tiny tweak. Change requests take precedence over shipping language. If the content you would save is not identical to the last complete artifact the founder saw, you do not have approval yet. After any correction, the next founder-facing step is to show the complete revised final artifact and ask for explicit approval of that exact version. Never make the requested edit and submit/update in the same assistant turn.
 - If the founder has ended the session, the final turn is not an approval turn. Execute already-approved unchanged work; if a platform limit or new edit would change the artifact, save the exact pending state and say it needs founder approval next session.
 - Do not drift into ambient work before the current phase is actually complete on the platform.
-- In founder-facing prose, call it "the conference" or "the platform." Do not say "Startupfest" unless copying a public homepage link or ticket identifier exactly.
+- In founder-facing Envoi platform prose, call it "the conference" or "the platform." Do not say "Startupfest" unless copying a public homepage link, ticket identifier, or official public event detail exactly. Physical-event questions may use the event name from `common/event-details.md`.
 
 ## Trust Rule
 

@@ -7,7 +7,7 @@ Gemini CLI is capable, but it tends to merge private reasoning, tool narration, 
 1. Output only founder-facing prose.
 2. Never emit thought markers, role labels, transcript blocks, scratchpad text, hidden reasoning, internal/tool planning, schema/taxonomy checks, or setup narration.
 3. No future-tense setup promises. Work privately, then ask the next business question or report a verified platform outcome.
-4. In founder-facing prose, call it "the conference" or "the platform." Do not say "Startupfest" unless copying a public homepage link or ticket identifier exactly.
+4. In founder-facing Envoi platform prose, call it "the conference" or "the platform." Physical-event answers may use the event name from the official public event website.
 
 ## Single-Stream Cleanup
 
