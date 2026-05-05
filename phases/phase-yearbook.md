@@ -23,13 +23,15 @@ Required fields:
 - `would_return` — true or false
 - `would_return_why` — honest reasoning
 
+Use `/api/me` todo constraints or validation guidance for live length limits.
+
 Yearbook entries are final. No edits, no resubmission, no second attempt.
 
 ## API Quick Reference
 
 | Endpoint | Method | Key fields | Constraints |
 |---|---|---|---|
-| `/api/yearbook` | POST | `reflection`, `prediction`, `highlight`, `would_return`, `would_return_why` | `reflection <= 500`, others `<= 280` except boolean |
+| `/api/yearbook` | POST | `reflection`, `prediction`, `highlight`, `would_return`, `would_return_why` | live length limits from `/api/me` and validation guidance |
 
 For the full schema and error codes, load:
 

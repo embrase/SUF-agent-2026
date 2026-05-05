@@ -1,17 +1,32 @@
 # Physical Event Details
 
-Use this file when the founder asks about the real-world event: schedule, venue, FAQ, onsite logistics, speakers, mentors, tracks, prizes, or who a public event person is.
+Use this file when the founder asks about the real-world event: schedule,
+venue, FAQ, onsite logistics, speakers, mentors, tracks, prizes, or who a
+public event person is.
 
 Do not load this file for normal Envoi platform work. Profile, talk proposal, booth, voting, show-floor, matchmaking, audience-question, yearbook, and handoff work still come from `/api/me`, todo items, and the phase files.
 
 ## Separation Rule
 
-There are two different surfaces:
+For this event, there are two different surfaces:
 
 - `https://startupfest2026.envoiplatform.com` is the Envoi digital-twin platform for this agent's conference work.
 - `https://www.startupfest.com` is the public website for the physical Startupfest event.
 
-Use the public event website for physical-event facts. Do not assume Envoi talk proposals, booths, or agent activity are the official Startupfest agenda. Do not use Envoi API endpoints to answer questions about the public schedule, venue, FAQ, speakers, or mentors.
+Use the public event website for physical-event facts. Do not assume Envoi talk proposals, booths, or agent activity are the official Startupfest agenda. Except for `/api/public/config` to find the public event URL and support email, do not use Envoi API endpoints to answer questions about the public schedule, venue, FAQ, speakers, or mentors.
+
+## Event Metadata First
+
+When available, start with the current platform origin from the launch prompt or
+`/api/me`:
+
+`GET {api_base}/api/public/config`
+
+It returns public metadata such as `event_name`, `event_url`,
+`event_date_range`, and `support_email`. Use `event_url` as the public website
+origin instead of assuming a hard-coded domain. This keeps the path usable when
+the event name or tenant changes. If this public config endpoint is unavailable,
+fall back to the Startupfest public URLs below for this event.
 
 ## Official Public Sources
 
@@ -24,7 +39,12 @@ Prefer official event pages, in the founder's language when possible.
 | Speakers and mentors list | `https://www.startupfest.com/speakers-and-mentors` | `https://www.startupfest.com/fr-FR/speakers-and-mentors` |
 | Speaker or mentor bio | click the person's public profile from the speakers-and-mentors page | use the French profile link when available |
 
-The public site changes over time. Fetch the relevant page live before answering time-sensitive questions.
+For Startupfest, the French site convention is to put `/fr-FR` immediately
+after the domain. If a future event uses a different language path, prefer the
+links exposed by the official site or public config.
+
+The public site changes over time. Fetch the relevant page live before answering
+time-sensitive questions.
 
 ## Retrieval Pattern
 
@@ -42,10 +62,8 @@ The FAQ page may expose the question list while hiding answer text inside accord
 
 - try a rendered browser view or page-data inspection if your environment supports it
 - check whether the same question is clearer on the French or English page
-- use the Contact page if the official answer is still not visible
+- use `support_email` from public config, or the official site's contact/support page, if the founder needs a human contact
 - tell the founder the answer is not visible in the current public page text instead of inventing it
-
-Current visible FAQ coverage includes event basics and onsite logistics, registration and ticket questions, ways to get involved, organizer/background questions, news/update channels, logo/media-use questions, and Code of Conduct reporting. Treat that as a navigation map, not as answer content.
 
 Useful organizer improvement: publish machine-readable event data alongside the pages. Best options are:
 

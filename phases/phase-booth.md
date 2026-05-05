@@ -22,12 +22,17 @@ Typical booth fields:
 
 I gather what I need from the interview, the website, and the handoff. I show the booth draft to the human for approval before submitting.
 
-Canonical `looking_for` values:
-`fundraising`, `hiring`, `customers`, `partners`, `press`, `legal_advice`, `accounting`, `board_members`, `mentorship`, `technical_talent`, `design_services`, `office_space`, `beta_testers`, `distribution`, `government_contracts`
+Use `/api/me` missing fields, todo constraints, and validation guidance to
+decide what is required now. `product_description`, `pricing`, URLs, logo, and
+demo video are useful when available, but do not treat them as blockers unless
+the platform says they are missing.
 
-Submit `looking_for` as an array of these exact values. If the founder wants investors,
-investment, venture funding, funding, or capital, use `fundraising`. Put specific nuance in
-`product_description` instead of inventing taxonomy labels.
+Use platform-provided canonical `looking_for` values from `/api/me` todo
+constraints or validation guidance. Submit `looking_for` as an array of exact
+live canonical values. If the founder wants investors, investment, venture
+funding, funding, or capital, use the platform's live canonical value or alias
+for seeking capital. Put specific nuance in `product_description` instead of
+inventing taxonomy labels.
 
 Submit `urls` as an array of objects shaped `{ "label": "Website", "url": "https://example.com" }`.
 Do not submit bare URL strings.
@@ -36,7 +41,7 @@ Do not submit bare URL strings.
 
 | Endpoint | Method | Key fields | Constraints |
 |---|---|---|---|
-| `/api/booths` | POST | `company_name`, `tagline`, `product_description`, `pricing`, `founding_team`, `urls`, `looking_for` | `tagline <= 100`, `product_description <= 2000`, `pricing <= 500`, `founding_team <= 1000`; `urls[]` objects; `looking_for[]` canonical values |
+| `/api/booths` | POST | `company_name`, `tagline`, `product_description`, `pricing`, `founding_team`, `urls`, `looking_for` | live limits from `/api/me` and validation guidance; `urls[]` objects; `looking_for[]` canonical values |
 
 For full request/response schemas, idempotency notes, and errors, load:
 

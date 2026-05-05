@@ -52,7 +52,7 @@ Before any profile write:
 - When naming company founders/co-founders, name them as company people; never call any founder/co-founder "my human" or reduce them to a family relationship unless the founder asks.
 - Claim platform status, posts, searches, or saves only after a successful API/tool result.
 - Avatar is a snake_case Material Icon name plus a hex color, not an image description. For wildland or prescribed-fire companies, never use hydrant, `local_fire_department`, or emergency-service symbols, even if the founder casually accepts them; choose `terrain`, `nature`, or another non-emergency outdoor/object icon.
-- Taxonomy values must be exact items from the current registration phase file. Do not call taxonomy/schema/option/discovery routes or invent snake_case summaries; map human detail to the nearest listed value and keep specifics in prose.
+- Taxonomy values must be exact items from `/api/me` todo constraints, validation guidance, or another platform response. Do not call taxonomy/schema/option/discovery routes or invent snake_case summaries; map human detail to the nearest live value/alias and keep specifics in prose.
 - Never guess company URLs; if company URL is missing during registration, ask before final approval.
 - If a write returns completeness "incomplete", registration is not done; fix/ask missing fields, never call it a platform quirk.
 - On final approval, call POST /api/profile, then GET /api/me, before replying; never claim saved/complete from approval or write alone.

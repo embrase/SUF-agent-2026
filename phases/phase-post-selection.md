@@ -65,11 +65,29 @@ If the final video exists, tell the founder to use their video guide link:
 
 The founder uploads the video to a cloud provider and submits the HTTPS URL there. I can help them refine the transcript, prepare recording notes, or choose a hosting URL. If they explicitly provide the agreement/video token and exact URL, I may submit it with `POST /api/talks/{id}/video-url`.
 
+## If Todo Says Review Talk Revisions
+
+This means organizers reviewed the final video and requested changes. The
+revision loop happens with the founder and organizer email thread for now; the
+platform state remains the source of truth until organizers review the revised
+video.
+
+What to do:
+
+1. Read the organizer revision notes from `/api/me` or the todo detail.
+2. Explain the requested changes to the founder in plain language.
+3. Help the founder plan the revised video or response.
+4. Save the next human-owned action in handoff if it cannot be completed now.
+
+Do not invent organizer approval, do not overwrite platform video state unless
+the founder gives an exact supported video URL and token, and do not claim final
+approval until `/api/me` shows `approval_status == "approved"`.
+
 ## API Quick Reference
 
 | Endpoint | Method | Key fields | Constraints |
 |---|---|---|---|
-| `/api/talks/{id}/transcript` | PUT | `transcript`, `language`, `duration`, `video_url?` | transcript required, `duration <= 480`, `video_url` only after agreement |
+| `/api/talks/{id}/transcript` | PUT | `transcript`, `language`, `duration`, `video_url?` | transcript required; language and duration from live constraints; `video_url` only after agreement |
 | `/api/talks/{id}/agreement` | GET | query `token` | human agreement page data |
 | `/api/talks/{id}/agreement` | POST | `token`, `decision`, `reason?` | founder decision only |
 | `/api/talks/{id}/video-url` | POST | `token`, `video_url` | HTTPS URL, only after agreement |
@@ -88,16 +106,25 @@ Use:
 
 ## What `/api/me` Sends Me Here
 
-The platform only emits two `post_selection` todos:
+The platform can emit these `post_selection` todos:
 
 - `todo.action == "upload_talk_transcript"` when the talk is selected and `talk.transcript` is missing.
 - `todo.action == "remind_video_delivery"` when the talk is agreed (`agreement_status == "agreed"`) and `talk.video_url` is missing.
+- `todo.action == "review_talk_revisions"` when organizers requested changes after reviewing the delivered video.
 
-The agreement decision is between those two todos. There is no `agreement` todo for the agent. The founder gets the agreement link by email or in-platform; my job is to wait for the next todo, not to push them.
+The agreement decision is between transcript and video-delivery work. There is
+no `agreement` todo for the agent. The founder gets the agreement link by email
+or in-platform; my job is to wait for the next todo, not to push them.
+
+`remind_video_delivery` is a recommended, human-blocked reminder. If I ask once
+and the final video does not exist yet, saving that fact in handoff lets me move
+on to other work, but it does not mean the platform video delivery is complete.
 
 ## Completion Criteria
 
-This phase is done when the open todo is resolved in platform state:
+This session's post-selection work is done when the open todo has been handled
+according to its current state:
 
 1. `upload_talk_transcript`: `GET /api/me` shows `talk.transcript` and I told the founder the confirmation code.
-2. `remind_video_delivery`: `GET /api/me` shows `talk.video_url`, or the founder has the video guide link and the missing final video is recorded in handoff as pending from human. Then move on to other open work.
+2. `remind_video_delivery`: platform-resolved only when `GET /api/me` shows `talk.video_url`; session-deferred when the founder has the video guide link and the missing final video is recorded in handoff as pending from human. Then move on to other open work.
+3. `review_talk_revisions`: the founder has the organizer revision request, the next human/email/video action is clear, and any pending item is saved in handoff. Final approval still requires `/api/me` to show `approval_status == "approved"`.
