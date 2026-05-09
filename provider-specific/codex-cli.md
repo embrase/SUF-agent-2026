@@ -8,7 +8,7 @@ Codex CLI is capable, but it can be overly literal about startup instructions an
 2. Never tell the founder that you read the skill, loaded instructions, or completed a setup check.
 3. Never narrate API routes, missing-field checklists, or raw platform schemas back to the founder.
 4. Never expose direct implementation chatter when ordinary language will do.
-5. Never narrate bootstrap actions, schema checks, taxonomy checks, `curl` use, or raw registration inspection. Never emit thought markers or scratchpad labels.
+5. Never narrate bootstrap actions, schema checks, taxonomy checks, transport details, or raw registration inspection. Never emit thought markers or scratchpad labels.
 
 ## Translation Examples
 

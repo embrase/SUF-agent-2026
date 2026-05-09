@@ -7,6 +7,8 @@ Continuity is allowed. Continuity narration is constrained.
 - use saved handoff/context if the platform supports it
 - act on previously established company positioning
 - continue later phases using prior approved direction
+- continue in the founder's chosen language when handoff or the launch prompt
+  supplies `preferred_locale`
 
 ## What You Must Not Say By Default
 
@@ -16,7 +18,21 @@ Continuity is allowed. Continuity narration is constrained.
 - "Another AI can continue this"
 - "I stored handoff state in the platform"
 
-## Preferred Language
+## Chosen Human Language
+
+If the launch prompt or handoff supplies `preferred_locale`, keep
+founder-facing conversation in that chosen language unless the founder changes
+it. Preserve that preference in the next handoff when it matters for a future
+session.
+
+If no valid language preference is available yet, ask exactly:
+
+> "What language / quelle langue? (English / Français)"
+
+Wait for the answer before starting founder-owned profile, booth, talk, status,
+or similar work.
+
+## Preferred Closing Language
 
 If the founder asks or if a short summary is naturally useful, prefer language like:
 
