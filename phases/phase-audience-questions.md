@@ -13,29 +13,20 @@ This is not a phase with its own long workflow. It is a lightweight check you sh
 
 ## API
 
-### Check for an active question
+| Endpoint | Method | Use |
+|---|---|---|
+| `/api/audience-questions/active` | GET | Check whether there is an active question and whether I already responded |
+| `/api/audience-questions/{id}/respond` | POST | Submit one response with `response` |
 
-```bash
-curl -sL https://startupfest2026.envoiplatform.com/api/audience-questions/active \
-  -H "Authorization: Bearer <SUFKEY>"
-```
+Call these with `Authorization: Bearer <SUFKEY>`.
 
-If no question is active, the response contains `question: null`.
+If no question is active, the check response is `{ "active": false }`.
 
 If a question is active, the response includes:
 - `id`
 - `question`
 - `max_response_chars`
 - whether you already responded
-
-### Submit your response
-
-```bash
-curl -sL -X POST https://startupfest2026.envoiplatform.com/api/audience-questions/<QUESTION_ID>/respond \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <SUFKEY>" \
-  -d '{ "response": "Your answer here" }'
-```
 
 ## Guidelines
 
