@@ -4,11 +4,12 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 
 const root = new URL('../..', import.meta.url).pathname;
+const retiredProductionHostPattern = ['startupfest', 'md'].join(String.raw`\.`);
 
 const retiredPatterns = [
   {
-    label: 'retired production host startupfest.md',
-    pattern: /https?:\/\/(?:www\.)?startupfest\.md\b|(?<!startupfest-)startupfest\.md\/(?:api|start|login|support)\b/g,
+    label: 'retired production host',
+    pattern: new RegExp(String.raw`https?:\\/\\/(?:www\\.)?${retiredProductionHostPattern}\\b|(?<!startupfest-)${retiredProductionHostPattern}\\/(?:api|start|login|support)\\b`, 'g'),
   },
   {
     label: 'retired fly.dev host',
@@ -61,6 +62,21 @@ const retiredPatterns = [
   {
     label: 'stale transcript upload field',
     pattern: /\b(?:subtitle_file|thumbnail)\b/g,
+  },
+];
+
+function isAllowedRetiredProductionHostGuard(label, line) {
+  return label === 'retired production host'
+    && line.includes('Do not interpret startupfest.md as a URL')
+    && line.includes('https://startupfest.md is not a valid URL')
+    && line.includes('The URL for the platform is https://');
+}
+
+const requiredUrlHostGuardContract = [
+  {
+    file: 'startupfest-skill.md',
+    label: 'startupfest.md is not a platform URL guard',
+    pattern: /Do not interpret startupfest\.md as a URL\.[\s\S]*https:\/\/startupfest\.md is not a valid URL\.[\s\S]*The URL for the platform is https:\/\/(?:qa\.envoiplatform\.com|startupfest2026\.envoiplatform\.com)/,
   },
 ];
 
@@ -148,6 +164,34 @@ const requiredRateLimitContract = [
   },
 ];
 
+const requiredPacingContract = [
+  {
+    file: 'startupfest-skill.md',
+    label: 'batched phases are pacing boundaries',
+    pattern: /batch is both a chunk of work and a pacing boundary[\s\S]*Never turn a batched phase into a tight polling\s+or write loop/i,
+  },
+  {
+    file: 'common/api-reference.md',
+    label: 'retryable 503 backpressure guidance',
+    pattern: /Retryable `503` backpressure[\s\S]*retry_after_seconds[\s\S]*Retry-After[\s\S]*details\.retryable[\s\S]*details\.guidance/i,
+  },
+  {
+    file: 'phases/phase-voting.md',
+    label: 'bounded voting batches',
+    pattern: /pacing boundary[\s\S]*do not request oversized batches[\s\S]*After[\s\S]*each batch[\s\S]*Retry-After/i,
+  },
+  {
+    file: 'phases/phase-show-floor.md',
+    label: 'booth batches honor retryable backpressure',
+    pattern: /pacing boundary[\s\S]*\/api\/booths\/next[\s\S]*429 rate_limited[\s\S]*retryable `503`[\s\S]*same or a smaller count/i,
+  },
+  {
+    file: 'provider-specific/gemini-cli.md',
+    label: 'Gemini bounded vote and retry behavior',
+    pattern: /Vote in bounded batches[\s\S]*do not increase `count`[\s\S]*Retry-After[\s\S]*retry_after_seconds[\s\S]*instead of looping/i,
+  },
+];
+
 function* markdownFiles(dir) {
   for (const entry of readdirSync(dir)) {
     if (entry === '.git' || entry === 'node_modules') continue;
@@ -173,14 +217,30 @@ for (const file of markdownFiles(root)) {
     for (const match of text.matchAll(pattern)) {
       const prefix = text.slice(0, match.index);
       const lineNumber = prefix.split(/\r?\n/).length;
+      const line = lines[lineNumber - 1].trim();
+      if (isAllowedRetiredProductionHostGuard(label, line)) continue;
       failures.push({
         file: relative(root, file),
         lineNumber,
         label,
         match: match[0],
-        line: lines[lineNumber - 1].trim(),
+        line,
       });
     }
+  }
+}
+
+for (const requirement of requiredUrlHostGuardContract) {
+  const path = join(root, requirement.file);
+  const text = readFileSync(path, 'utf8');
+  if (!requirement.pattern.test(text)) {
+    failures.push({
+      file: requirement.file,
+      lineNumber: 1,
+      label: `missing URL host guard: ${requirement.label}`,
+      match: requirement.label,
+      line: 'Required platform URL guard text was not found.',
+    });
   }
 }
 
@@ -222,6 +282,20 @@ for (const requirement of requiredRateLimitContract) {
       label: `missing rate-limit contract: ${requirement.label}`,
       match: requirement.label,
       line: 'Required 429 rate-limit behavior guidance was not found.',
+    });
+  }
+}
+
+for (const requirement of requiredPacingContract) {
+  const path = join(root, requirement.file);
+  const text = readFileSync(path, 'utf8');
+  if (!requirement.pattern.test(text)) {
+    failures.push({
+      file: requirement.file,
+      lineNumber: 1,
+      label: `missing pacing contract: ${requirement.label}`,
+      match: requirement.label,
+      line: 'Required Retry-After / bounded-batch pacing guidance was not found.',
     });
   }
 }
