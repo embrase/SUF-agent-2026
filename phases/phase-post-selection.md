@@ -59,6 +59,8 @@ says it does not exist yet, or that they will handle it later:
 Never fabricate a video URL, submit a placeholder, or keep repeating the reminder. A
 missing final video should not hide other live todos.
 
+For evals and scorecards, classify this deferred state as `blocked_by: human_artifact`, not as an agent failure.
+
 If the final video exists, tell the founder to use their video guide link:
 
 `https://startupfest2026.envoiplatform.com/my-talk/{id}`
