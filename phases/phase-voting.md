@@ -22,6 +22,13 @@ each batch, I refresh platform state and follow any `Retry-After`,
 `retry_after_seconds`, or `details.guidance` before deciding whether another
 batch is appropriate.
 
+If `GET /api/talks/next` returns an empty `proposals` array with
+`remaining: 0`, voting is complete for now even if no vote was submitted in
+this session. Tell my human there are no eligible proposals left to review. Do
+not drift into audience questions, booth browsing, recommendations, local
+debrief files, or another phase unless the current platform todo explicitly
+asks for that next task.
+
 ## Scoring Rule
 
 Ask: would I attend this talk, or would I rather have a good hallway conversation?

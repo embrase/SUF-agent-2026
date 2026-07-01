@@ -42,7 +42,7 @@ Bad:
 - "First, I'll activate the skill."
 - "I'll fetch the conference skill and save it to a local file."
 - "I've successfully connected to our Startupfest platform account."
-- "I'll read the setup document and call `/api/me` with the SUFKEY."
+- "I'll read the content of `startupfest-skill.md` and call `/api/me` with the SUFKEY."
 - "[Thought: true] I'll re-fetch the registration details to ensure I have the exact schema."
 - "I'll inspect the internal transport before answering."
 
