@@ -65,21 +65,6 @@ const retiredPatterns = [
   },
 ];
 
-function isAllowedRetiredProductionHostGuard(label, line) {
-  return label === 'retired production host'
-    && line.includes('Do not interpret startupfest.md as a URL')
-    && line.includes('https://startupfest.md is not a valid URL')
-    && line.includes('The URL for the platform is https://');
-}
-
-const requiredUrlHostGuardContract = [
-  {
-    file: 'startupfest-skill.md',
-    label: 'startupfest.md is not a platform URL guard',
-    pattern: /Do not interpret startupfest\.md as a URL\.[\s\S]*https:\/\/startupfest\.md is not a valid URL\.[\s\S]*The URL for the platform is https:\/\/(?:qa\.envoiplatform\.com|startupfest2026\.envoiplatform\.com)/,
-  },
-];
-
 const requiredLanguageContract = [
   {
     file: 'startupfest-skill.md',
@@ -190,6 +175,16 @@ const requiredPacingContract = [
     label: 'Gemini bounded vote and retry behavior',
     pattern: /Vote in bounded batches[\s\S]*do not increase `count`[\s\S]*Retry-After[\s\S]*retry_after_seconds[\s\S]*instead of looping/i,
   },
+  {
+    file: 'phases/phase-voting.md',
+    label: 'zero eligible proposals close voting without optional drift',
+    pattern: /empty `proposals` array[\s\S]*`remaining: 0`[\s\S]*voting is complete for now[\s\S]*Do\s+not\s+drift into audience questions/i,
+  },
+  {
+    file: 'provider-specific/gemini-cli.md',
+    label: 'Gemini zero eligible proposals close voting without optional drift',
+    pattern: /no proposals and `remaining: 0`[\s\S]*stop the voting\s+phase cleanly[\s\S]*Do not\s+answer audience questions/i,
+  },
 ];
 
 function* markdownFiles(dir) {
@@ -217,30 +212,14 @@ for (const file of markdownFiles(root)) {
     for (const match of text.matchAll(pattern)) {
       const prefix = text.slice(0, match.index);
       const lineNumber = prefix.split(/\r?\n/).length;
-      const line = lines[lineNumber - 1].trim();
-      if (isAllowedRetiredProductionHostGuard(label, line)) continue;
       failures.push({
         file: relative(root, file),
         lineNumber,
         label,
         match: match[0],
-        line,
+        line: lines[lineNumber - 1].trim(),
       });
     }
-  }
-}
-
-for (const requirement of requiredUrlHostGuardContract) {
-  const path = join(root, requirement.file);
-  const text = readFileSync(path, 'utf8');
-  if (!requirement.pattern.test(text)) {
-    failures.push({
-      file: requirement.file,
-      lineNumber: 1,
-      label: `missing URL host guard: ${requirement.label}`,
-      match: requirement.label,
-      line: 'Required platform URL guard text was not found.',
-    });
   }
 }
 

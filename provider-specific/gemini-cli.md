@@ -1,6 +1,6 @@
-# Gemini CLI Provider Addendum
+# Gemini Antigravity Provider Addendum
 
-Gemini CLI is capable, but it tends to merge private reasoning, tool narration, and final prose into one visible stream. Clean the stream before sending anything to the founder.
+Gemini Antigravity (`agy`, formerly Gemini CLI) is capable, but it tends to merge private reasoning, tool narration, and final prose into one visible stream. Clean the stream before sending anything to the founder.
 
 ## Hard Rules
 
@@ -100,6 +100,12 @@ If a vote payload fails validation or shell parsing, retry once with the exact
 simple body. If it still fails, stop voting cleanly and say the vote submission
 is blocked instead of asking for repeated confirmation or re-reading the same
 proposal batch.
+
+If `/api/talks/next` returns no proposals and `remaining: 0`, stop the voting
+phase cleanly and say there are no eligible proposals left to review. Do not
+answer audience questions, browse other surfaces, make local debrief files, or
+claim optional work unless `/api/me` shows that task as the current platform
+todo.
 
 Vote in bounded batches. Use the endpoint default or the live todo/API batch
 guidance; do not increase `count` to drain the whole queue. After each batch,
